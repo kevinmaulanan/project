@@ -6,8 +6,7 @@ require('dotenv').config()
 Auth.post('/login', (req, res) => {
   const { username, password } = req.body
   if (username && password) {
-    const query = `SELECT *FROM project WHERE username='${username}' && password='${password}'`
-    console.log(query)
+
     if ((username === 'admin') && (password === 'admin')) {
       const data = { email: 'admin@server.com' }
       const token = jwt.sign(data, process.env.APP_KEY, { expiresIn: '15m' })

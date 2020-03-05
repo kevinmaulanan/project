@@ -7,7 +7,6 @@ module.exports = {
         (error, results, fields) => {
           if (!error) {
             const { total } = results[0]
-            console.log({ total })
             if (total !== 0) {
               resolve(false)
             } else {
@@ -26,5 +25,41 @@ module.exports = {
           }
         })
     })
+  },
+  get: (id, food, drink) => {
+    console.log(id)
+    if (id) {
+      return new Promise((resolve, reject) => {
+        db.query(`SELECT restaurant.id, restaurant.restaurant, menu_food.food, menu_food.price, menu_drink.drink, menu_drink.price FROM restaurant JOIN menu_food ON menu_food.id=restaurant.id JOIN menu_drink ON menu_drink.id=restaurant.id WHERE restaurant.id=${id}`, (error, result, field) => {
+          if (error) reject = new Error(error)
+          resolve(result[0])
+        })
+      })
+    }
+    else if (require.params === food) {
+      return new Promise((resolve, reject) => {
+        db.query(`SELECT restaurant.id, restaurant.restaurant, menu_food.food, menu_food.price FROM restaurant JOIN menu_food ON menu_food.id=restaurant.id JOIN menu_drink ON menu_drink.id=restaurant.id`, (error, result, field) => {
+          if (error) reject = new Error(error)
+          resolve(result[0])
+        })
+      })
+    }
+    else if (drink) {
+      return new Promise((resolve, reject) => {
+        db.query(`SELECT restaurant.id, restaurant.restaurant, menu_food.food, menu_food.price FROM restaurant JOIN menu_food ON menu_food.id=restaurant.id JOIN menu_drink ON menu_drink.id=restaurant.id WHERE restaurant.id=${id}`, (error, result, field) => {
+          if (error) reject = new Error(error)
+          resolve(result[0])
+        })
+      })
+    }
+    else {
+      return new Promise((resolve, reject) => {
+        db.query(`SELECT restaurant.id, restaurant.restaurant, menu_food.food, menu_food.price, menu_drink.drink, menu_drink.price FROM restaurant JOIN menu_food ON menu_food.id=restaurant.id JOIN menu_drink ON menu_drink.id=restaurant.id`, (error, result, field) => {
+          if (error) reject = new Error(error)
+          resolve(result)
+        })
+      }
+      )
+    }
   }
 }
