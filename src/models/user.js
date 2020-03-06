@@ -64,7 +64,7 @@ module.exports = {
   get: (id) => {
     if (id) {
       return new Promise((resolve, reject) => {
-        const query = `SELECT user_privat.id, user_privat.username, users_detail.nama, users_detail.email, user_class.class_user, user_privat.created_at, user_privat.updated_at FROM user_privat JOIN users_detail ON user_privat.id_users_detail=users_detail.id JOIN user_class ON user_privat.id=user_class.id WHERE user_privat.id=${id}`
+        const query = `SELECT user_privat.id, user_privat.username, users_detail.nama, users_detail.email, user_class.class_user, user_privat.created_at, user_privat.updated_at FROM user_privat JOIN users_detail ON user_privat.id_users_detail=users_detail.id JOIN user_class ON user_privat.id_user_class=user_class.id WHERE user_privat.id=${id}`
         db.query(query, (error, result, field) => {
           if (error) reject = new Error(error)
           resolve(result[0])
@@ -72,7 +72,7 @@ module.exports = {
       })
     } else {
       return new Promise((resolve, reject) => {
-        db.query(`SELECT user_privat.id, user_privat.username, users_detail.nama, users_detail.email, user_class.class_user, user_privat.created_at, user_privat.updated_at FROM user_privat JOIN users_detail ON user_privat.id_users_detail=users_detail.id JOIN user_class ON user_privat.id=user_class.id`, (error, result, field) => {
+        db.query(`SELECT user_privat.id, user_privat.username, users_detail.nama, users_detail.email, user_class.class_user, user_privat.created_at, user_privat.updated_at FROM user_privat JOIN users_detail ON user_privat.id_users_detail=users_detail.id JOIN user_class ON user_privat.id_user_class=user_class.id`, (error, result, field) => {
           if (error) reject = new Error(error)
           resolve(result)
         })

@@ -42,8 +42,24 @@ const getAllMenu = async (req, res) => {
     }
 }
 
+const resFood = async (req, res) => {
+    const data = await restaurant.get()
+    if (data) {
+        res.send({
+            success: true,
+            msg: 'Data Berhasil',
+            data
+        })
+    } else {
+        req.send({
+            success: false,
+            msg: 'error'
+        })
+    }
+}
 module.exports = {
     getMenu,
-    getAllMenu
+    getAllMenu,
+    resFood
 
 }
