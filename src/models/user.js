@@ -1,60 +1,78 @@
 const db = require('../config/db')
 
 module.exports = {
-  create: (username, password, level) => {
+  create: (name, username, password, email, ) => {
     return new Promise((resolve, reject) => {
-      db.query(`SELECT COUNT(*) as total FROM users WHERE username = '${username}' LIMIT 1`,
+      db.query(`SELECT COUNT(*) as total FROM user_privat WHERE username = '${username}' LIMIT 1`,
         (error, results, fields) => {
           if (!error) {
             const { total } = results[0]
             if (total !== 0) {
-              resolve(false)
+              resolve({ success: false, message: 'Username already used. Please fill in the email again' })
             } else {
-              // const hashpassword = bcrypt.hashSync('${password}', salt) '${hashpassword}'
-              db.query(`INSERT INTO users(username, password, level) VALUES('${username}','${password}', ${level})`,
-                (error, result, fields) => {
-                  if (error) {
-                    console.log(error)
-                    reject(new Error(error))
-                  }
-                  resolve(true)
-                })
+              {
+                db.query(`SELECT COUNT(*) as total FROM users_detail WHERE email = '${email}' LIMIT 1`,
+                  (error, results, fields) => {
+                    if (!error) {
+                      const { total } = results[0]
+                      if (total !== 0) {
+                        resolve({ success: false, message: 'Email already used. Please fill in the email again ' })
+                      } else {
+                        // const hashpassword = bcrypt.hashSync('${password}', salt) '${hashpassword}'
+                        db.query(`INSERT INTO users_detail(nama, email) VALUES('${name}','${email}')`,
+                          (error, result, fields) => {
+                            if (error) {
+                              resolve(false)
+                            } else {
+                              db.query(`SELECT COUNT(*) as total FROM users_detail WHERE email = '${email}' LIMIT 1 `,
+                                (error, results, fields) => {
+                                  if (!error) {
+                                    console.log('woi7')
+                                    db.query(`select max(id) as id from users_detail`, (error, results, fields) => {
+                                      if (error) {
+                                        resolve(false)
+                                      } else {
+
+                                        const maxId = results[0].id
+                                        console.log(maxId)
+                                        db.query(`INSERT INTO user_privat(username, password, id_users_detail, id_user_class) VALUES('${username}','${password}',${maxId},4)`, (error, results, fields) => {
+                                          if (!error) {
+                                            resolve(true)
+                                          }
+                                        })
+                                      }
+                                    })
+                                  }
+                                }
+                              )
+                            }
+
+                          })
+                      }
+                    } else {
+                      reject(new Error(error))
+                    }
+                  })
+              }
             }
-          } else {
-            reject(new Error(error))
           }
-        })
+        }
+      )
     })
   },
-  get: (id, food, drink) => {
-    console.log(id)
+
+  get: (id) => {
     if (id) {
       return new Promise((resolve, reject) => {
-        db.query(`SELECT restaurant.id, restaurant.restaurant, menu_food.food, menu_food.price, menu_drink.drink, menu_drink.price FROM restaurant JOIN menu_food ON menu_food.id=restaurant.id JOIN menu_drink ON menu_drink.id=restaurant.id WHERE restaurant.id=${id}`, (error, result, field) => {
+        const query = `SELECT user_privat.id, user_privat.username, users_detail.nama, users_detail.email, user_class.class_user, user_privat.created_at, user_privat.updated_at FROM user_privat JOIN users_detail ON user_privat.id_users_detail=users_detail.id JOIN user_class ON user_privat.id=user_class.id WHERE user_privat.id=${id}`
+        db.query(query, (error, result, field) => {
           if (error) reject = new Error(error)
           resolve(result[0])
         })
       })
-    }
-    else if (require.params === food) {
+    } else {
       return new Promise((resolve, reject) => {
-        db.query(`SELECT restaurant.id, restaurant.restaurant, menu_food.food, menu_food.price FROM restaurant JOIN menu_food ON menu_food.id=restaurant.id JOIN menu_drink ON menu_drink.id=restaurant.id`, (error, result, field) => {
-          if (error) reject = new Error(error)
-          resolve(result[0])
-        })
-      })
-    }
-    else if (drink) {
-      return new Promise((resolve, reject) => {
-        db.query(`SELECT restaurant.id, restaurant.restaurant, menu_food.food, menu_food.price FROM restaurant JOIN menu_food ON menu_food.id=restaurant.id JOIN menu_drink ON menu_drink.id=restaurant.id WHERE restaurant.id=${id}`, (error, result, field) => {
-          if (error) reject = new Error(error)
-          resolve(result[0])
-        })
-      })
-    }
-    else {
-      return new Promise((resolve, reject) => {
-        db.query(`SELECT restaurant.id, restaurant.restaurant, menu_food.food, menu_food.price, menu_drink.drink, menu_drink.price FROM restaurant JOIN menu_food ON menu_food.id=restaurant.id JOIN menu_drink ON menu_drink.id=restaurant.id`, (error, result, field) => {
+        db.query(`SELECT user_privat.id, user_privat.username, users_detail.nama, users_detail.email, user_class.class_user, user_privat.created_at, user_privat.updated_at FROM user_privat JOIN users_detail ON user_privat.id_users_detail=users_detail.id JOIN user_class ON user_privat.id=user_class.id`, (error, result, field) => {
           if (error) reject = new Error(error)
           resolve(result)
         })

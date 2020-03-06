@@ -1,0 +1,45 @@
+const db = require('../config/db')
+
+module.exports = {
+    get: (id) => {
+        console.log(id)
+        if (id) {
+            return new Promise((resolve, reject) => {
+                const query = `SELECT restaurant.id, restaurant.restaurant, menu_food.food, menu_food.price, menu_drink.drink, menu_drink.price_drink FROM restaurant JOIN menu_food ON menu_food.id=restaurant.id JOIN menu_drink ON menu_drink.id=restaurant.id WHERE restaurant.id=${id}`
+                db.query(query, (error, result, field) => {
+                    if (error) reject = new Error(error)
+                    resolve(result[0])
+                })
+            })
+        } else {
+            return new Promise((resolve, reject) => {
+                db.query(`SELECT restaurant.id, restaurant.restaurant, menu_food.food, menu_food.price, menu_drink.drink, menu_drink.price_drink FROM restaurant JOIN menu_food ON menu_food.id=restaurant.id JOIN menu_drink ON menu_drink.id=restaurant.id`, (error, result, field) => {
+                    if (error) reject = new Error(error)
+                    resolve(result)
+                })
+            }
+            )
+        }
+    },
+
+
+    getFood: (food) => {
+        if (food) {
+            return new Promise((resolve, reject) => {
+                const query = `SELECT restaurant.id, restaurant.restaurant, menu_food.food, menu_food.price FROM restaurant JOIN menu_food ON menu_food.id=restaurant.id WHERE menu_food.food='${food}'`
+                db.query(query, (error, result, field) => {
+                    if (error) reject = new Error(error)
+                    resolve(result[0])
+                })
+            })
+        } else {
+            return new Promise((resolve, reject) => {
+                db.query(`SELECT restaurant.id, restaurant.restaurant, menu_food.food, menu_food.price FROM restaurant JOIN menu_food ON menu_food.id=restaurant.id`, (error, result, field) => {
+                    if (error) reject = new Error(error)
+                    resolve(result)
+                })
+            }
+            )
+        }
+    }
+}

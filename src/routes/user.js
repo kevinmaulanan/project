@@ -1,12 +1,10 @@
 const User = require('express').Router()
-const { CreateDataAuth, getAllMenu, getMenu } = require('../controller/user')
+const { getAllUser, getUser } = require('../controller/user')
 
-console.log(CreateDataAuth)
 
-User.post('/', CreateDataAuth)
 
-User.get('/:id', getMenu)
+User.get('/:id', getUser)
 
-User.get('/', getAllMenu)
+User.get('/', getAllUser)
 
 module.exports = { User }

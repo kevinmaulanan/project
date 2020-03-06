@@ -13,6 +13,7 @@ function checkAuthToken(req, res, next) {
   }
   try {
     req.auth = jwt.verify(token, process.env.APP_KEY)
+    console.log(req.auth)
     next()
   } catch (e) {
     res.send({
