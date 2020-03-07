@@ -19,7 +19,6 @@ module.exports = {
                                 if (compare) {
 
                                     const hash = bcrypt.hashSync('${newPassword}', bcrypt.genSaltSync(10))
-                                    console.log(hash)
                                     db.query(`UPDATE user_privat SET password='${hash}' where username='${username}'`, (error, results, fields) => {
                                         if (error) {
                                             resolve({ success: false, message: 'password and new password false' })

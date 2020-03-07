@@ -1,7 +1,7 @@
 const forgotPassword = require('express').Router()
 const { fpassword } = require('../controller/forgotPassword')
 
-forgotPassword.post('/', fpassword)
+forgotPassword.patch('/', fpassword)
 
 module.exports = {
     forgotPassword

@@ -1,18 +1,8 @@
 const restaurant = require('../models/restaurant')
 
-const getMenu = async (req, res) => {
-    const params = {
-        search: req.query.search || ''
-    }
-    if (req.query.search) {
-        const key = Object.keys(params.search)
-        params.search = key.map((v, i) => (
-            { keys: key[i], value: req.query.search[key[i]] }
-        )
-        )
-    }
+const getResto = async (req, res) => {
     const { id } = req.params
-    const data = await restaurant.get(id)
+    const data = await restaurant.Resto(id)
     if (data) {
         res.send({
             success: true,
@@ -26,8 +16,10 @@ const getMenu = async (req, res) => {
     }
 }
 
-const getAllMenu = async (req, res) => {
-    const data = await restaurant.get()
+
+
+const getAllResto = async (req, res) => {
+    const data = await restaurant.Resto()
     if (data) {
         res.send({
             success: true,
@@ -42,8 +34,26 @@ const getAllMenu = async (req, res) => {
     }
 }
 
-const resFood = async (req, res) => {
-    const data = await restaurant.get()
+
+const getFood = async (req, res) => {
+    const { id } = req.params
+    const data = await restaurant.Food(id)
+    if (data) {
+        res.send({
+            success: true,
+            data
+        })
+    } else {
+        res.send({
+            success: false,
+            msg: 'error'
+        })
+    }
+}
+
+const getAllFood = async (req, res) => {
+    const data = await restaurant.Food()
+    console.log(data)
     if (data) {
         res.send({
             success: true,
@@ -57,9 +67,13 @@ const resFood = async (req, res) => {
         })
     }
 }
+
+
+
+
 module.exports = {
-    getMenu,
-    getAllMenu,
-    resFood
-
+    getResto,
+    getAllResto,
+    getFood,
+    getAllFood
 }

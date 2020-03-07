@@ -1,9 +1,9 @@
-// const resFood = require('express').Router()
-// const { Food, FoodAll } = require('../controller/resFood')
+// const Food = require('express').Router()
+// const { getFood, getAllFood } = require('../controller/resFood')
 
-// resFood.get('/', FoodAll)
-// resFood.get('/:id', Food)
+// Food.get('/', getAllFood)
+// Food.get('/:id', getFood)
 
 // module.exports = {
-//     resFood
+//     Food
 // }

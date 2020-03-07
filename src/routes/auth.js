@@ -1,5 +1,6 @@
 const Auth = require('express').Router()
 const jwt = require('jsonwebtoken')
+const db = require('../config/db')
 
 require('dotenv').config()
 

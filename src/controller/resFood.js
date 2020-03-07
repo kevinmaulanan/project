@@ -1,8 +1,8 @@
 // const resFood = require('../models/resFood')
 
-// const Food = async (req, res) => {
+// const getFood = async (req, res) => {
 //     const { id } = req.params
-//     const data = await resFood.get(id)
+//     const data = await resFood.Food(id)
 //     if (data) {
 //         res.send({
 //             success: true,
@@ -16,8 +16,8 @@
 //     }
 // }
 
-// const FoodAll = async (req, res) => {
-//     const data = await resFood.get()
+// const getAllFood = async (req, res) => {
+//     const data = await resFood.Food()
 //     if (data) {
 //         res.send({
 //             success: true,
@@ -31,6 +31,6 @@
 //     }
 // }
 // module.exports = {
-//     Food,
-//     FoodAll
+//     getFood,
+//     getAllFood
 // }

@@ -35,10 +35,10 @@ module.exports = {
                                                                                                     const maxId = results[0].id
                                                                                                     db.query(`INSERT INTO user_privat(username, password, id_users_detail, id_user_class) VALUES('${username}','${password}',${maxId},4)`, (error, results, fields) => {
                                                                                                          if (error) {
-                                                                                                              resolve(true)
+                                                                                                              resolve({ success: false, message: 'saa' })
                                                                                                               reject(new Error(error))
                                                                                                          }
-                                                                                                         resolve(true)
+                                                                                                         resolve({ success: true, message: 'Berhasil' })
 
                                                                                                     })
 
