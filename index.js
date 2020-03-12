@@ -1,20 +1,26 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 
-const { checkAuthToken, checkPermission } = require('./src/middlawer/AuthMiddlawer')
-// const { checkUserClass } = require('./src/users/classUser.js')
+const path = require('path')
+const cors = require('cors')
+
 
 const { User } = require('./src/routes/user')
 const { Auth } = require('./src/routes/auth')
 const { Restaurant } = require('./src/routes/restaurant')
-// const { Food } = require('./src/routes/food')
 const { Items } = require('./src/routes/items')
-// const { resFood } = require('./src/routes/resFood')
+
 const { category } = require('./src/routes/category')
 const { Register } = require('./src/routes/register')
-const { forgotPassword } = require('./src/routes/forgotPassword')
-// const { Items } = require('./src/routes/items')
+const { authPassword } = require('./src/routes/authPassword')
+
 const { migration } = require('./src/routes/migrations')
+const { Guest } = require('./src/routes/guest')
+const { generalUser } = require('./src/routes/generalUser.js')
+const { checkAuthToken } = require('./src/middlawer/AuthMiddlawer')
+
+
+
 
 
 
@@ -24,18 +30,21 @@ const app = express()
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+app.use('/uploads', express.static('uploads'))
+app.use(cors())
 
-// app.use('/check', checkPermission)
 app.use('/user', checkAuthToken, User)
 app.use('/restaurant', Restaurant)
-// app.use('/restaurant/food', Food)
+
 app.use('/items', Items)
 app.use('/auth', Auth)
 app.use('/register', Register)
 app.use('/category', category)
+app.use('/', Guest)
+app.use('/', authPassword)
+app.use('/', checkAuthToken, generalUser)
 
-// app.use('/restaurant/foodd', checkAuthToken, resFood)
-app.use('/forgot-password', forgotPassword)
+
 
 
 app.use('/migration', migration)

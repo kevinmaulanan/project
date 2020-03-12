@@ -64,7 +64,7 @@ module.exports = {
   get: (id) => {
     if (id) {
       return new Promise((resolve, reject) => {
-        const query = `SELECT user_privat.id, user_privat.username, users_detail.nama, users_detail.email, user_class.class_user, user_privat.created_at, user_privat.updated_at FROM user_privat JOIN users_detail ON user_privat.id_users_detail=users_detail.id JOIN user_class ON user_privat.id_user_class=user_class.id WHERE user_privat.id=${id}`
+        const query = `SELECT user_privat.id, user_privat.username, users_detail.nama, users_detail.email, user_class.class_user, user_privat.created_at FROM user_privat JOIN users_detail ON user_privat.id_users_detail=users_detail.id JOIN user_class ON user_privat.id_user_class=user_class.id WHERE user_privat.id=${id}`
         db.query(query, (error, result, field) => {
           if (error) reject = new Error(error)
           resolve(result[0])
@@ -72,12 +72,35 @@ module.exports = {
       })
     } else {
       return new Promise((resolve, reject) => {
-        db.query(`SELECT user_privat.id, user_privat.username, users_detail.nama, users_detail.email, user_class.class_user, user_privat.created_at, user_privat.updated_at FROM user_privat JOIN users_detail ON user_privat.id_users_detail=users_detail.id JOIN user_class ON user_privat.id_user_class=user_class.id`, (error, result, field) => {
+        db.query(`SELECT user_privat.id, user_privat.username, users_detail.nama, users_detail.email, user_class.class_user, user_privat.created_at FROM user_privat JOIN users_detail ON user_privat.id_users_detail=users_detail.id JOIN user_class ON user_privat.id_user_class=user_class.id`, (error, result, field) => {
           if (error) reject = new Error(error)
           resolve(result)
         })
       }
       )
     }
-  }
+  },
+
+  delete: (id) => {
+    return new Promise((resolve, reject) => {
+      db.query(`SELECT COUNT(*) as total FROM user_privat where id=${id}`, (error, result, field) => {
+        if (!error) {
+          const { total } = result[0]
+          if (total === 0) {
+            resolve({ success: false, message: 'ID not Found' })
+          } else {
+            db.query(`DELETE user_privat, users_detail FROM user_privat JOIN users_detail ON user_privat.id_users_detail = users_detail.id WHERE user_privat.id =${id}`, (error, result, field) => {
+              if (error) {
+                resolve({ success: false, message: 'failed to delete failed due to an error in the query' })
+              } else {
+                resolve({ success: true, message: 'User has been deleted' })
+              }
+            })
+          }
+        }
+      })
+    })
+  },
+
 }
+

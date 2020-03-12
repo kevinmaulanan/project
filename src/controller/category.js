@@ -1,4 +1,5 @@
 const processCategory = require('../models/category')
+const qs = require('qs')
 
 const getCategory = async (req, res) => {
     const { id } = req.body
@@ -17,11 +18,54 @@ const getCategory = async (req, res) => {
 }
 
 const getAllCategory = async (req, res) => {
-    const data = await processCategory.get()
-    if (data) {
+    const params = {
+        currentPage: req.query.page || 1,
+        perPage: req.query.limit || 5,
+        search: req.query.search || '',
+        sort: req.query.sort || { keys: 'id', value: 0 }
+    }
+    if (req.query.search) {
+        const key = Object.keys(params.search)
+        params.search = key.map((v, i) => (
+
+            { keys: key[i], value: req.query.search[key[i]] }
+        ))
+    }
+
+    const sortkey = Object.keys(params.sort)
+    if (req.query.sort) {
+        params.sort = sortkey.map((v, i) => (
+            { keys: sortkey[i], value: req.query.sort[sortkey[i]] }
+        ))
+    }
+
+    const { result, total } = await processCategory.getAll(params)
+    const { query } = req
+    console.log(query)
+
+    if (!query.page) {
+        query.page = '1'
+    }
+    const totalPages = Math.ceil(total / parseInt(params.perPage))
+    query.page = parseInt(query.page) + 1
+    const nextPage = (parseInt(params.currentPage) < totalPages ? process.env.APP_URL.concat('category?').concat(qs.stringify(req.query)) : null)
+
+    query.page = parseInt(query.page) - 2
+    const previousPage = (parseInt(params.currentPage) > 1 ? process.env.APP_URL.concat('category?').concat(qs.stringify(req.query)) : null)
+
+    const pagination = {
+        currentPage: parseInt(params.currentPage),
+        nextPage,
+        previousPage,
+        totalPages,
+        perPage: parseInt(params.perPage),
+        totalEntries: total
+    }
+    if (result) {
         res.send({
             success: true,
-            data
+            result,
+            pagination
         })
     } else {
         res.send({
@@ -73,7 +117,7 @@ const updateCategory = async (req, res) => {
 }
 
 const deleteCategory = async (req, res) => {
-    const { id } = req.body
+    const { id } = req.params
     const { success, message } = await processCategory.delete(id)
     try {
         if (success) {

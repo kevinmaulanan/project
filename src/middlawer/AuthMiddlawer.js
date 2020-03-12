@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
 function checkAuthToken(req, res, next) {
-  let token = req.headers.authorization
+  let token = req.headers.authorization || ""
   if (token.startsWith('Bearer')) {
     token = token.slice(7, token.length)
   } else {
@@ -13,12 +13,11 @@ function checkAuthToken(req, res, next) {
   }
   try {
     req.auth = jwt.verify(token, process.env.APP_KEY)
-    console.log(req.auth)
     next()
   } catch (e) {
     res.send({
       success: false,
-      msg: e.message
+      msg: 'You not Login. Please login!'
     })
   }
 }

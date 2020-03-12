@@ -1,10 +1,17 @@
 const user = require('../models/user')
 const bcrypt = require('bcryptjs')
+const upload = require('../multer/multer')
+
 
 const CreateUser = async (req, res) => {
-  const { name, username, password, email, } = req.body
-  const encryptedPassword = bcrypt.hashSync(password)
   try {
+    await upload(req, res, 'image')
+    console.log(req)
+    console.log(req.file)
+    req.body.images = '/uploads/' + req.file.filename
+    const { name, username, password, email } = req.body
+    const encryptedPassword = bcrypt.hashSync(password)
+
     const { create, message } = await user.create(name, username, encryptedPassword, email)
     if (create) {
       res.send({ success: true, msg: 'User has been created!' })
@@ -73,7 +80,7 @@ const updateUserPassword = async (req, res) => {
         })
       }
     } else {
-      req.send({
+      res.send({
         success: false,
         msg: 'Confirm Password doesnt match!'
       })
@@ -113,9 +120,35 @@ const getAllUser = async (req, res) => {
       data
     })
   } else {
-    req.send({
+    res.send({
       success: false,
       msg: 'error'
+    })
+  }
+}
+
+const deleteUser = async (req, res) => {
+  const { id } = req.params
+  const { message, success } = await user.delete(id)
+  console.log(message)
+  console.log(success)
+  console.log(id)
+  try {
+    if (success) {
+      res.send({
+        success: true,
+        message
+      })
+    } else {
+      res.send({
+        success: false,
+        message
+      })
+    }
+  } catch (error) {
+    res.send({
+      success: false,
+      message
     })
   }
 }
@@ -124,5 +157,6 @@ module.exports = {
   CreateUser,
   updateUserPassword,
   getUser,
-  getAllUser
+  getAllUser,
+  deleteUser
 }

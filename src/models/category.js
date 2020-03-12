@@ -1,18 +1,26 @@
 const db = require('../config/db')
 
 module.exports = {
-    get: (id) => {
+    get: (id, params) => {
         if (id) {
             return new Promise((resolve, reject) => {
                 const query = `SELECT category_detail.id, category.category, category_detail.category_detail FROM category_detail JOIN category ON category_detail.id_category=category.id WHERE category_detail.id=${id}`
                 db.query(query, (error, result, field) => {
+                    console.log(query)
                     if (error) reject = new Error(error)
                     resolve(result[0])
                 })
             })
         } else {
+            console.log('woi')
+            const { currentPage, perPage, search, sort } = params
+            const condition = `
+            ${search && `WHERE ${search.map(v => `${v.keys} LIKE '${v.value}%'`).join(' AND ')}`} 
+            ORDER BY ${sort.keys} ${!sort.value ? 'ASC' : 'DESC'} 
+            ${(currentPage && perPage) && `LIMIT ${perPage} OFFSET ${parseInt(perPage) * ((parseInt(currentPage) - 1))}`}`
+
             return new Promise((resolve, reject) => {
-                db.query(`SELECT category_detail.id, category.category, category_detail.category_detail FROM category_detail JOIN category ON category_detail.id_category=category.id`, (error, result, field) => {
+                db.query(`SELECT category_detail.id, category.category, category_detail.category_detail FROM category_detail JOIN category ON category_detail.id_category=category.id ${condition}`, (error, result, field) => {
                     if (error) reject = new Error(error)
                     resolve(result)
                 })
@@ -20,6 +28,35 @@ module.exports = {
             )
         }
     },
+
+
+    getAll: (params) => {
+        const { currentPage, perPage, search, sort } = params
+        const condition = `
+        ${search && `WHERE ${search.map(v => `${v.keys} LIKE '${v.value}%'`).join(' AND ')}`} 
+            ORDER BY ${sort.keys} ${!sort.value ? 'ASC' : 'DESC'} 
+            ${(currentPage && perPage) && `LIMIT ${perPage} OFFSET ${parseInt(perPage) * ((parseInt(currentPage) - 1))}`}`
+
+        return new Promise((resolve, reject) => {
+            db.query(`SELECT COUNT(*) as total from category_detail  JOIN category ON category_detail.id_category=category.id`, (error, result) => {
+                const { total } = result[0]
+                db.query(`SELECT category_detail.id, category.category, category_detail.category_detail FROM category_detail JOIN category ON category_detail.id_category=category.id ${condition}`, (error, result, field) => {
+                    if (error) {
+                        console.log('woi')
+                    }
+
+                    else {
+                        console.log(total)
+                        resolve({ result, total })
+                    }
+
+                })
+            }
+            )
+        })
+
+    },
+
 
     create: (category_detail, id_category) => {
         return new Promise((resolve, reject) => {

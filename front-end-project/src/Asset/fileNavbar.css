@@ -1,0 +1,50 @@
+.NavBar{
+    background:#37988e;
+    padding: 0 20px;
+    list-style: none;
+    position: relative;
+    display: inline-table;
+    width: 100%;
+}
+
+
+.Login{
+    background:#FFFFFF;
+
+}
+
+.from{
+  
+	
+    /*meletakkan form ke tengah*/
+    
+
+}
+
+.bg{
+
+    background-size: cover;
+    height: 1000px; 
+}
+
+.rows{
+    color: black;
+margin-left: 200px;
+    margin-top: 200px;
+    margin-bottom: 200px;
+    margin-right: 200px;
+    
+	
+}
+
+.Image{
+    background-image: url('restaurant.png');
+       background-repeat: no-repeat;
+       background-size: cover;
+ 
+}
+
+.login-container {
+    min-height: 100vh;
+}
+

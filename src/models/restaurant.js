@@ -1,4 +1,5 @@
 const db = require('../config/db')
+const { paginationParams } = require('../pagination/pagination')
 
 module.exports = {
     Resto: (id) => {
@@ -21,27 +22,108 @@ module.exports = {
         }
     },
 
+    AllResto: (req) => {
+        const { paginate, conditions } = paginationParams(req)
+        return new Promise((resolve, reject) => {
+            db.query(`SELECT COUNT(*) as total FROM restaurant ${conditions}`, (error, result, field) => {
+                if (error) {
+                    resolve({ success: false, message: 'Query False' })
+                } else {
+                    const { total } = result[0]
+                    db.query(`SELECT *FROM restaurant ${conditions}${paginate}`, (error, result, field) => {
+                        if (error) {
+                            resolve({ success: false, message: 'Query False' })
+                        } else {
+                            const data = result
+                            resolve({ success: true, message: 'Data Resturant berhasil', data, total })
+                        }
 
-    Food: (id) => {
-        if (id) {
-            return new Promise((resolve, reject) => {
-                const query = `SELECT menu_food.id, restaurant.restaurant, menu_food.food, menu_food.price FROM menu_food JOIN restaurant ON menu_food.id_restaurant=restaurant.id where menu_food.id=${id}`
-                db.query(query, (error, result, field) => {
-                    if (error) reject = new Error(error)
-                    resolve(result[0])
-                })
+                    })
+                }
             })
-        } else {
-            return new Promise((resolve, reject) => {
-                const query = `SELECT menu_food.id, restaurant.restaurant, menu_food.food, menu_food.price FROM menu_food JOIN restaurant ON menu_food.id_restaurant=restaurant.id`
-                db.query(query, (error, result, field) => {
-                    if (error) reject = new Error(error)
-                    resolve(result)
+        })
+    },
 
+
+    create: (restaurant, description, id_admin) => {
+        console.log('woi')
+        return new Promise((resolve, reject) => {
+            db.query(`SELECT COUNT(*) as total FROM restaurant where restaurant='${restaurant}'`, (error, result, field) => {
+                if (!error) {
+                    const { total } = result[0]
+                    if (total > 0) {
+                        console.log('woi')
+                        resolve({ success: false, message: 'Restaurant Already exist' })
+                    }
+                    else {
+                        console.log('woi1')
+                        db.query(`INSERT INTO restaurant(restaurant,description,id_admin) Values('${restaurant}','${description}',${id_admin})`, (error, result, field) => {
+                            if (error) {
+                                console.log('woi2')
+                                resolve({ success: false, message: 'There was an error entering data into the database ' })
+                            } else {
+                                resolve({ success: true, message: 'data has been added' })
+                            }
+                        })
+                    }
+                }
+            })
+        })
+    },
+
+
+    delete: (id) => {
+        return new Promise((resolve, reject) => {
+            db.query(`SELECT COUNT(*) as total FROM restaurant where id=${id}`, (error, result, field) => {
+                if (!error) {
+                    const { total } = result[0]
+                    if (total === 0) {
+                        resolve({ success: false, message: 'ID not Found' })
+                    } else {
+                        db.query(`DELETE from restaurant WHERE id =${id}`, (error, result, field) => {
+                            if (error) {
+                                resolve({ success: false, message: 'failed to delete failed due to an error in the query' })
+                            } else {
+                                resolve({ success: true, message: 'Restaurant has been deleted' })
+                            }
+                        })
+                    }
+                }
+            })
+        })
+    },
+
+    update: (id, restaurant, description, id_admin) => {
+        return new Promise((resolve, reject) => {
+            var regex = /^\d+$/
+
+            if (regex.test(id_admin) === false) {
+                resolve({ success: false, message: 'id_admin Harus Angka' })
+                return;
+            }
+            else {
+                db.query(`SELECT COUNT(*) as total FROM restaurant where id=${id}`, (error, result, field) => {
+                    if (!error) {
+                        const { total } = result[0]
+                        if (total === 0) {
+                            resolve({ success: false, message: 'Id not found' })
+                        } else {
+                            db.query(`UPDATE restaurant SET restaurant= '${restaurant}', description= '${description}', id_admin= ${id_admin} where id=${id}`, (error, result, field) => {
+                                if (error) {
+                                    console.log('woi')
+                                    resolve({ success: false, message: 'Query False' })
+                                } else {
+                                    resolve({ success: true, message: 'Data has been Updated' })
+                                }
+                            })
+                        }
+                    } else {
+                        resolve({ success: false, message: 'Query False' })
+                    }
                 })
             }
-            )
-        }
+        })
+
     },
 
 
