@@ -12,12 +12,11 @@ import {
     NavLink
 } from 'reactstrap'
 import { Link } from 'react-router-dom'
-import JumbrotronCostume from '../Component/jumbotron'
 
 import axios from 'axios'
 import '../Asset/fileNavbar.css'
 
-class Login extends Component {
+class ForgotPassword extends Component {
 
 
     render() {
@@ -43,7 +42,7 @@ class Login extends Component {
                                         <div className="col-lg-10 mx-auto">
                                             <div className="p-4">
                                                 <div className="text-center">
-                                                    <h1 className="h4 text-gray-900 mb-4">REGISTER PAGE</h1>
+                                                    <h1 className="h4 text-gray-900 mb-4">FORGOT PASSWORD PAGE</h1>
                                                 </div>
                                                 <form className="user">
                                                     <div className="form-group">
@@ -53,11 +52,15 @@ class Login extends Component {
                                                         <input type="text" className="form-control form-control-user" placeholder="Email..."></input>
                                                     </div>
                                                     <div className="form-group">
-                                                        <input type="password" className="form-control form-control-user" placeholder="Password..."></input>
+                                                        <input type="password" className="form-control form-control-user" placeholder="New Password..."></input>
                                                     </div>
-                                                    <Link to="/"><a href="" className="btn btn-primary btn-user btn-block">
-                                                        Daftar
-                                                    </a></Link>
+                                                    <div className="form-group">
+                                                        <input type="password" className="form-control form-control-user" placeholder="Confirm Password..."></input>
+                                                    </div>
+                                                    <Link to="/Login"><button type="button" className="btn btn-primary btn-user btn-block">
+                                                        Submit
+                                                        </button>
+                                                    </Link>
 
 
                                                 </form>
@@ -87,6 +90,6 @@ class Login extends Component {
 
 }
 
-export default Login
+export default ForgotPassword
 
 

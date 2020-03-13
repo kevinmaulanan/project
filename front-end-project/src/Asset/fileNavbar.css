@@ -14,7 +14,6 @@
 }
 
 .bg{
-    background-color: #37988e;
     background-size: cover;
     height: 1000px; 
 }
@@ -57,8 +56,10 @@ margin-left: 20px;
     border-top: 2px solid #beb6b6;
 }
 
-
+.guys{
+    transform: scaleY(1.5);
+  }
 
 .container {
- min-height: 300px;
+ min-height: 500px;
 }
