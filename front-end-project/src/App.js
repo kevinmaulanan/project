@@ -5,6 +5,9 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/login'
 import Register from './pages/register'
+import Restaurant from './pages/restaurant'
+import Items from './pages/items'
+
 
 
 function App() {
@@ -16,6 +19,10 @@ function App() {
         <Route exact path="/" render={(props) => (<Home {...props} />)} />
         <Route path="/login" render={(props) => (<Login {...props} />)} />
         <Route path="/register" render={(props) => (<Register {...props} />)} />
+        <Route path="/restaurant" render={(props) => (<Restaurant {...props} />)} />
+        <Route path="/items" render={(props) => (<Items {...props} />)} />
+
+
       </Switch>
 
     </BrowserRouter >

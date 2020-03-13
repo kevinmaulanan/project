@@ -7,7 +7,8 @@ import {
     Input,
     Container,
     Row,
-    Col
+    Col,
+    Card
 } from 'reactstrap'
 
 import axios from 'axios'
@@ -18,31 +19,35 @@ class Login extends Component {
 
     render() {
         return (
-            <div className="login-container Image">
 
 
-                <div className="from">
-                    <div className="rows">
-                        <Row>
+            // <div className="row">
+            //     <div className="col-sm-12 col-sm-offset-2">
+            <div>
+                <Row className="justify-content-md-center">
 
-                            <Col >
-                                <Form >
-                                    <FormGroup>
-                                        <Label for="exampleEmail">Email</Label>
-                                        <Input type="email" name="email" id="exampleEmail" placeholder="with a placeholder" />
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <Label for="examplePassword">Password</Label>
-                                        <Input type="password" name="password" id="examplePassword" placeholder="password placeholder" />
-                                    </FormGroup>
-                                </Form>
-                            </Col>
+                    <Col md={{ span: 4, offset: 4 }}>
+                        <Form>
+                            <div className="form-grup">
+                                <Label for="Name" >Name
+                                <Input type="text" className="form-control" placeholder="Masukkan Namanya">Nama</Input>
+                                </Label>
+                            </div>
+                            <div className="form-grup">
+                                <Label for="Paswword" >Paswword
+                                <Input type="text" className="form-control" placeholder="Masukkan Password" >Password</Input>
+                                </Label>
+                            </div>
+                        </Form>
+                    </Col>
+                </Row>
 
 
-                        </Row>
-                    </div>
-                </div>
+
+
             </div>
+            // </div>
+
 
         )
     }

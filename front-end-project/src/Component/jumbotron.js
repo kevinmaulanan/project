@@ -14,11 +14,10 @@ class JumbrotronCostume extends Component {
             <div className="text-center">
 
                 <Jumbotron fluid >
-
                     <Container fluid>
                         <img src={Logo}></img>
                         <h1 className="display-3">Restaurant Kevman</h1>
-                        <p className="lead">Ini adlaah Restaurant terbaik sedunia</p>
+                        <p className="lead">Ini adalah Restaurant terbaik sedunia</p>
                     </Container>
 
                 </Jumbotron>

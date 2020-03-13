@@ -4,10 +4,10 @@ import '../Asset/fileNavbar.css'
 
 const Register = (props) => {
     return (
-        <div >
-            <Form className="bg">
-                <div className="rows">
-                    <Row form>
+        <div className="bg">
+            <Form >
+                <div>
+                    <Row>
                         <Col md={6}>
                             <FormGroup>
                                 <Label for="exampleEmail">Email</Label>

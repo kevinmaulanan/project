@@ -11,36 +11,11 @@ import {
     Button,
     Container
 } from 'reactstrap'
-import Pizza from '../Asset/pizza.png'
+import fotoRestaurant from '../Asset/restaurant.png'
 
-
-class ItemsCostume extends Component {
+class DataRestaurant extends Component {
     render() {
         return (
-
-            //     constructor(props) {
-            //     super(props)
-            //     this.state = {
-            //         data_project: []
-            //     }
-            // }
-
-            // componentDidMount() {
-            //     this.getDataProject()
-            // }
-
-
-            // getDataProject() {
-            //     axios.get("http://localhost:3333/browse_items")
-            //         .then(res => {
-            //             console.log(res)
-            //             let dataArr = res.data.result
-            //             console.log(dataArr)
-            //             this.setState({ data_project: dataArr })
-            //         })
-            //         .catch(error => console.log(error))
-            // }
-
             <div>
                 <div>
                     <section className="about">
@@ -82,7 +57,7 @@ class ItemsCostume extends Component {
                                     <div className="row">
                                         <div className="col-sm-4">
                                             <div class="card mb-3">
-                                                <img src={Pizza} class="card-img-top" alt=""></img>
+                                                <img src={fotoRestaurant} class="card-img-top" alt=""></img>
                                                 <div class="card-body">
                                                     <h5 class="card-title">Kevman</h5>
                                                     <p class="card-text">Ini adalah restaurant sunda terbaik di dunia</p>
@@ -93,7 +68,7 @@ class ItemsCostume extends Component {
 
                                         <div className="col-sm-4">
                                             <div class="card mb-3">
-                                                <img src={Pizza} class="card-img-top" alt=""></img>
+                                                <img src={fotoRestaurant} class="card-img-top" alt=""></img>
                                                 <div class="card-body">
                                                     <h5 class="card-title">Davman</h5>
                                                     <p class="card-text">Ini adalah restaurant sunda terbaik di dunia</p>
@@ -104,7 +79,7 @@ class ItemsCostume extends Component {
 
                                         <div className="col-sm-4">
                                             <div class="card mb-3">
-                                                <img src={Pizza} class="card-img-top" alt=""></img>
+                                                <img src={fotoRestaurant} class="card-img-top" alt=""></img>
                                                 <div class="card-body">
                                                     <h5 class="card-title">Levman</h5>
                                                     <p class="card-text">Ini adalah restaurant sunda terbaik di dunia</p>
@@ -116,6 +91,14 @@ class ItemsCostume extends Component {
                                     </div>
                                 </div>
                             </section>
+                        </div>
+                    </section>
+
+                    <section>
+                        <div className="container text-center">
+                            <div className="row">
+                                <div className="col-sm-12"> WOI</div>
+                            </div>
                         </div>
                     </section>
 
@@ -131,4 +114,5 @@ class ItemsCostume extends Component {
     }
 }
 
-export default ItemsCostume
+
+export default DataRestaurant
