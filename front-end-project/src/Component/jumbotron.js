@@ -16,7 +16,7 @@ class JumbrotronCostume extends Component {
                 <Jumbotron fluid >
                     <Container fluid>
                         <img src={Logo}></img>
-                        <h1 className="display-3">Restaurant Kevman</h1>
+                        <h1 className="display-3" className="h1">RESTAURANT KEVMAN</h1>
                         <p className="lead">Ini adalah Restaurant terbaik sedunia</p>
                     </Container>
 

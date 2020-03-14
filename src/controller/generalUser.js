@@ -1,29 +1,7 @@
 const processGeneralUser = require('../models/generalUser.js')
 const qs = require('querystring')
+const upload = require('../multer/multer')
 
-// const params = {
-//     currentPage: req.query.page || 1,
-//     perPage: req.query.limit || 5,
-//     search: req.query.search || '',
-//     sort: req.query.sort || { keys: 'name', value: 0 }
-// }
-
-// const totalPages = Math.ceil(data.total / parseInt(params.perPage))
-// query.page = parseInt(query.page) + 1
-// const nextPage = (parseInt(params.currentPage) < totalPages ? process.env.APP_URL.concat('user?').concat(qs.stringify(req.query)) : null)
-// console.log(nextPage)
-
-// query.page = parseInt(query.page) - 2
-// const previousPage = (parseInt(params.currentPage) > 1 ? process.env.APP_URL.concat('user?').concat(qs.stringify(req.query)) : null)
-
-// const pagination = {
-//     currentPage: parseInt(params.currentPage),
-//     nextPage,
-//     previousPage,
-//     totalPages,
-//     perPage: parseInt(params.perPage),
-//     totalEntries: data.total
-// }
 
 const getProfile = async (req, res) => {
     const { id } = req.params
@@ -73,9 +51,17 @@ const getMyProfile = async (req, res) => {
 }
 
 const updateMyProfile = async (req, res) => {
+
+    await upload(req, res, 'images')
+    req.body.images = '/uploads/' + req.file.filename
+    const dataImage = req.body.images
+    console.log(req.file.filename + '2oi')
+
+    console.log(req.body)
     const id = req.auth.id_users_detail
+    console.log(id)
     const { name, email, image, age, tall, weight } = req.body
-    const { data, success, message } = await processGeneralUser.update(id, name, email, image, age, tall, weight)
+    const { data, success, message } = await processGeneralUser.update(id, name, email, image, age, tall, weight, dataImage)
     try {
         if (success) {
             res.send({

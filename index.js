@@ -40,8 +40,8 @@ app.use('/items', Items)
 app.use('/auth', Auth)
 app.use('/register', Register)
 app.use('/category', category)
-app.use('/', Guest)
 app.use('/', authPassword)
+app.use('/', Guest)
 app.use('/', checkAuthToken, generalUser)
 
 

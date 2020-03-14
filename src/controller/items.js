@@ -1,6 +1,6 @@
 const processItems = require('../models/items')
 const { paginate } = require('../pagination/pagination')
-
+const uploads = require('../multer/multer')
 
 const getItems = async (req, res) => {
     const { id } = req.params
@@ -50,8 +50,11 @@ const getAllItems = async (req, res) => {
 
 
 const addItems = async (req, res) => {
+    await uploads(req, res, 'images')
+    req.body.images = '/uploads/' + req.file.filename
+    const imageRestaurant = req.body.images
     const { name, quantity, price, id_category_detail, id_restaurant } = req.body
-    const { success, message, field } = await processItems.createItems(name, quantity, price, id_category_detail, id_restaurant)
+    const { success, message, field } = await processItems.createItems(name, quantity, price, id_category_detail, id_restaurant, imageRestaurant)
     console.log(success)
     try {
         if (success) {
@@ -71,10 +74,16 @@ const addItems = async (req, res) => {
 }
 
 const updateItems = async (req, res) => {
+    await uploads(req, res, 'images')
+
+    req.body.images = '/uploads/' + req.file.filename
+    const dataImage = req.body.images
+    console.log(req.body)
+    console.log(dataImage)
     const { id } = req.params
     console.log(id)
     const { name, quantity, price, id_category_detail, id_restaurant } = req.body
-    const data = await processItems.updateItems(id, name, quantity, price, id_category_detail, id_restaurant)
+    const data = await processItems.updateItems(id, name, quantity, price, id_category_detail, id_restaurant, dataImage)
     if (data) {
         res.send({
             success: true,

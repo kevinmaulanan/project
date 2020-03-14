@@ -1,98 +1,146 @@
-import React, { Component } from 'react'
+import React, { Component, useState } from 'react'
 import {
-    Nav,
     Navbar,
     NavbarBrand,
-    NavItem,
-    NavLink,
-    Container,
-    Form,
-    Input,
-    Button,
     NavbarToggler,
     Collapse,
-
+    Nav,
+    NavItem,
+    NavLink,
+    UncontrolledDropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
+    NavbarText,
+    Form,
+    Button,
+    Input
 } from 'reactstrap'
-
 import { Link } from 'react-router-dom'
 import Logo from '../Asset/logo.png'
 import FileNavBar from '../Asset/fileNavbar.css'
+import Axios from 'axios'
+import MenuRestaurant from '../Looping/menu_Resto'
+import MenuCategory from '../Looping/menu_category'
 
-class NavbarCostume extends Component {
+
+
+
+
+class CostumeNavBar extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            get_all_restaurant: [],
+            get_category: [],
+
+        }
+    }
+
+    componentDidMount() {
+        this.getAllRestaurant()
+        this.getCategory()
+    }
+
+    getAllRestaurant() {
+        Axios.get("http://localhost:3333/browse_restaurant")
+            .then(res => {
+                if (res.data.success === false) {
+
+                    alert(res.data.message)
+                }
+                else {
+
+                    let getMenuRestaurant = res.data.result
+                    this.setState({ get_all_restaurant: getMenuRestaurant })
+                }
+            })
+
+    }
+
+
+    getCategory() {
+        Axios.get("http://localhost:3333/browse_category")
+            .then(res => {
+                if (res.data.success === false) {
+                    console.log('woi')
+                    alert(res.data.message)
+                }
+                else {
+                    console.log(res.data.result)
+                    let getCategory = res.data.result
+                    this.setState({ get_category: getCategory })
+                }
+            })
+
+    }
+
 
     render() {
         return (
+            <div>
+                <Navbar color="light" light expand="md">
+                    <NavbarBrand href="/"><img src={Logo} width="100" height="50"></img> KEVMAN</NavbarBrand>
+                    <NavbarToggler />
+                    <Collapse navbar>
+                        <Nav className="mr-auto" navbar>
+                            <NavItem>
+                                <NavLink href="/home">Home</NavLink>
+                            </NavItem>
+                            <UncontrolledDropdown nav inNavbar>
+                                <DropdownToggle nav caret>
+                                    Restaurant
+                                </DropdownToggle>
+                                <DropdownMenu>
 
 
-            <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-                <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
-                    <Link to="/">    <a className="navbar-brand" >
-                        <img src={Logo} width="70" height="30" class="d-inline-block align-top" alt=""></img>
-                    KEVMAN
-                        </a></Link>
-                    <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
-                        <li className="nav-item active">
-                            <Link to="/restaurant"> <a className="nav-link" >Restaurant <span className="sr-only">(current)</span></a></Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link to="/items"> <a className="nav-link" >Items</a></Link>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link disabled" >Disabled</a>
-                        </li>
-                    </ul>
-                    <form className="form-inline my-2 my-lg-0">
-                        <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"></input>
-                        <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                                    {this.state.get_all_restaurant.map((val, index) => (
+                                        <MenuRestaurant
+                                            id={val.id}
+                                            restaurant={val.restaurant}
+                                            description={val.description}
+                                            created_at={val.created_at}
+                                        />
+                                    ))}
 
-                    </form>
-                </div>
-            </nav>
+                                </DropdownMenu>
+                            </UncontrolledDropdown>
 
-            // <div>
-            //     <Navbar expand="md" className="NavBar fixed-top">
-            //         <NavbarBrand ><img src={Logo} width="50px" height="50px" ></img>KEVMAN FDC</NavbarBrand>
-            //         <Nav className="mr-auto mt-2 mt-lg-0" >
-            //             <NavItem className="nav-pills nav-fill" >
-            //                 <a href=""> <NavLink className="active"> Home</NavLink></a>
-            //             </NavItem>
+                            <UncontrolledDropdown nav inNavbar>
+                                <DropdownToggle nav caret className="mr-5">
+                                    Items
+                                </DropdownToggle>
+                                <DropdownMenu>
 
 
-            //             <NavItem  >
-            //                 <NavLink> Items</NavLink>
-            //             </NavItem>
-            //         </Nav>
-            //         <Form className="form-inline">
-            //             <Input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"></Input>
-            //             <Button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</Button>
+                                    {this.state.get_category.map((val, index) => (
+                                        <MenuCategory
+                                            id={val.id}
+                                            category={val.category}
+                                            category_detail={val.category_detail}
+                                        />
+                                    ))}
 
-            //         </Form>
+                                </DropdownMenu>
+                            </UncontrolledDropdown>
+                            <Form className="form-inline my-2 my-lg-0">
+                                <Input className="" type="search" placeholder="Search" aria-label="Search"></Input>
+                                <Button className="btn btn-inline-success my-2 my-sm-0" type="submit">Search</Button>
+                            </Form>
 
-            //     </Navbar>
+                        </Nav>
 
-            // </div >
-
-            // <div>
-            //     <Navbar color="faded" light>
-            //         <NavbarBrand href="/" className="mr-auto">reactstrap</NavbarBrand>
-            //         <NavbarToggler onClick={toggleNavbar} className="mr-2" />
-            //         <Collapse isOpen={!collapsed} navbar>
-            //             <Nav navbar>
-            //                 <NavItem>
-            //                     <NavLink href="/components/">Components</NavLink>
-            //                 </NavItem>
-            //                 <NavItem>
-            //                     <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
-            //                 </NavItem>
-            //             </Nav>
-            //         </Collapse>
-            //     </Navbar>
-            // </div>
+                        <Form className="form-inline my-2 my-lg-0 mr-5" >
+                            <Link to="/login">  <Button className="btn-success btn-inline-danger my-2 my-sm-0" type="submit" >Login</Button></Link>
+                        </Form>
+                    </Collapse>
+                </Navbar>
+            </div>
         )
     }
+
+
 }
 
-export default NavbarCostume
+export default CostumeNavBar;

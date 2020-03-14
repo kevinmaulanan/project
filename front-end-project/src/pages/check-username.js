@@ -1,20 +1,12 @@
 import React, { Component } from 'react'
 
-import {
-    Button,
-    Input
-} from 'reactstrap'
-import '../Asset/fileNavbar.css'
 
-import { Link } from 'react-router-dom'
-import Axios from 'axios'
+class CheckUsername extends Component {
 
-class Login extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            username: '',
-            password: '',
+            username: ''
 
         }
     }
@@ -25,18 +17,12 @@ class Login extends Component {
         })
     }
 
-    handlePassword = (event) => {
-        this.setState({
-            password: event.target.value
-        })
-    }
 
     handleSubmitLogin = (event) => {
         event.preventDefault()
 
         const data = {
             username: this.state.username,
-            password: this.state.password
         }
 
         if (this.state.username === "" && this.state.password === "") {
@@ -51,15 +37,14 @@ class Login extends Component {
 
         else {
 
-            Axios.post("http://localhost:3333/auth/login",
+            Axios.post("http://localhost:3333/verify",
                 data)
                 .then(res => {
                     console.log(res.data)
 
                     if (res.status == 200) {
                         try {
-                            localStorage.setItem('token', JSON.stringify(res.data.data.token))
-                            this.props.history.push('/restaurant')
+                            this.props.history.push('/forgot-password')
                         } catch (error) {
                             console.log(res.data.message)
                             alert(res.data.message)
@@ -73,12 +58,11 @@ class Login extends Component {
     }
 
 
+
     render() {
+
+
         return (
-
-            // <div className="row">
-            //     <div className="col-sm-12 col-sm-offset-2">
-
             <div className="bg">
                 <div className="container p-5 mt-5">
                     <div className="row justify-content-center">
@@ -93,13 +77,10 @@ class Login extends Component {
                                                 </div>
                                                 <form className="user">
                                                     <div className="form-group">
-                                                        <Input type="text" name="username" className="form-control form-control-user" placeholder="Username..." onChange={(event) => { this.handleUsername(event) }} ></Input>
+                                                        <Input type="text" name="username" className="form-control form-control-user" placeholder="Username..." onChange={(event) => { this.handleCheckUsername(event) }} ></Input>
 
                                                     </div>
-                                                    <div className="form-group">
-                                                        <Input type="password" name="password" className="form-control form-control-user" placeholder="Password..." onChange={(event) => { this.handlePassword(event) }} ></Input>
 
-                                                    </div>
 
                                                     <Button className="btn btn-primary btn-user btn-block" onClick={(event) => this.handleSubmitLogin(event)} type="submit">Login</Button>
 
@@ -123,10 +104,7 @@ class Login extends Component {
 
         )
     }
-
-
 }
 
-export default Login
 
-
+export default CheckUsername

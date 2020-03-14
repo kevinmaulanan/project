@@ -2,9 +2,13 @@ const generalUser = require('express').Router()
 
 const { getProfile, getMyProfile, updateMyProfile, getTopUp, addTopUp, getReview, getAllReviews, getCarts, createReviews, checkout } = require('../controller/generalUser')
 
-generalUser.get('/profile/:id', getProfile)
+
+const { checkAuthToken } = require('../middlawer/AuthMiddlawer')
+
+
+generalUser.patch('/profile', updateMyProfile)
 generalUser.get('/profile', getMyProfile)
-generalUser.patch('/profile/:id', updateMyProfile)
+generalUser.get('/profile/:id', getProfile)
 generalUser.get('/topup', getTopUp)
 generalUser.post('/topup/add', addTopUp)
 generalUser.post('/carts', getCarts)

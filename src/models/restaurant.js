@@ -45,8 +45,9 @@ module.exports = {
     },
 
 
-    create: (restaurant, description, id_admin) => {
-        console.log('woi')
+    create: (restaurant, description, id_admin, imageRestaurant) => {
+
+        console.log(imageRestaurant)
         return new Promise((resolve, reject) => {
             db.query(`SELECT COUNT(*) as total FROM restaurant where restaurant='${restaurant}'`, (error, result, field) => {
                 if (!error) {
@@ -57,7 +58,7 @@ module.exports = {
                     }
                     else {
                         console.log('woi1')
-                        db.query(`INSERT INTO restaurant(restaurant,description,id_admin) Values('${restaurant}','${description}',${id_admin})`, (error, result, field) => {
+                        db.query(`INSERT INTO restaurant(restaurant,image_restaurant,description,id_admin) Values('${restaurant}','${imageRestaurant}', '${description}',${id_admin})`, (error, result, field) => {
                             if (error) {
                                 console.log('woi2')
                                 resolve({ success: false, message: 'There was an error entering data into the database ' })
@@ -93,7 +94,7 @@ module.exports = {
         })
     },
 
-    update: (id, restaurant, description, id_admin) => {
+    update: (id, restaurant, description, id_admin, imageRestaurant) => {
         return new Promise((resolve, reject) => {
             var regex = /^\d+$/
 
@@ -108,7 +109,7 @@ module.exports = {
                         if (total === 0) {
                             resolve({ success: false, message: 'Id not found' })
                         } else {
-                            db.query(`UPDATE restaurant SET restaurant= '${restaurant}', description= '${description}', id_admin= ${id_admin} where id=${id}`, (error, result, field) => {
+                            db.query(`UPDATE restaurant SET restaurant= '${restaurant}', image_restaurant='${imageRestaurant}' ,description= '${description}', id_admin= ${id_admin} where id=${id}`, (error, result, field) => {
                                 if (error) {
                                     console.log('woi')
                                     resolve({ success: false, message: 'Query False' })

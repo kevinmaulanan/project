@@ -21,10 +21,11 @@ Auth.post('/login', (req, res) => {
           const comparePassword = bcrypt.compareSync(password, pwData)
           console.log(comparePassword)
           if (comparePassword === false) {
-            res.send({
-              success: false,
-              message: 'Wrong Password!!'
-            })
+            res.send(
+              {
+                success: false,
+                message: 'Wrong Password!!'
+              })
           } else {
             db.query(`SELECT user_privat.id, user_privat.username, users_detail.nama, users_detail.email, users_detail.image, users_detail.age, users_detail.tall, users_detail.weight, user_class.class_user, user_privat.id_users_detail FROM user_privat JOIN user_class ON user_privat.id_user_class = user_class.id JOIN users_detail ON user_privat.id_users_detail=users_detail.id where user_privat.username='${username}' `, (error, result, fields) => {
               console.log(result[0].class_user)
@@ -41,7 +42,7 @@ Auth.post('/login', (req, res) => {
                   const token = jwt.sign(getUser, process.env.APP_KEY, { expiresIn: '1h' })
                   res.send({
                     success: true,
-                    msg: 'Login Berhasil',
+                    message: 'Login Berhasil',
                     data: {
                       token
                     }

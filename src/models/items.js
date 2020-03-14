@@ -63,7 +63,7 @@ module.exports = {
     },
 
 
-    createItems: (name, quantity, price, id_category_detail, id_restaurant) => {
+    createItems: (name, quantity, price, id_category_detail, id_restaurant, dataImage) => {
         return new Promise((resolve, reject) => {
             db.query(`SELECT COUNT(*) as total FROM items where name = '${name}'`, (error, result, field) => {
                 if (!error) {
@@ -72,7 +72,8 @@ module.exports = {
                         resolve({ success: false, message: 'Name Already exist' })
                     }
                     else {
-                        db.query(`INSERT INTO items(name, quantity, price, id_category_detail, id_restaurant) Values('${name}', ${quantity}, ${price}, ${id_category_detail}, ${id_restaurant})`, (error, result, field) => {
+                        console.log(dataImage)
+                        db.query(`INSERT INTO items(name, image_items, quantity, price, id_category_detail, id_restaurant) Values('${name}', '${dataImage}' ,${quantity}, ${price}, ${id_category_detail}, ${id_restaurant})`, (error, result, field) => {
                             if (error) {
                                 resolve({ success: false, message: 'There was an error entering data into the database ' })
                             } else {
@@ -86,7 +87,7 @@ module.exports = {
     },
 
 
-    updateItems: (id, name, quantity, price, id_category_detail, id_restaurant) => {
+    updateItems: (id, name, quantity, price, id_category_detail, id_restaurant, dataImage) => {
         return new Promise((resolve, reject) => {
             db.query(`SELECT Count(*) as total FROM items where id = ${id} `, (error, result, field) => {
                 if (!error) {
@@ -94,7 +95,7 @@ module.exports = {
                     if (total === 0) {
                         resolve({ success: false, message: 'Id not found' })
                     } else {
-                        db.query(`UPDATE items SET name = '${name}', quantity = ${quantity}, price = ${price}, id_category_detail = ${id_category_detail}, id_restaurant = ${id_restaurant} where id = ${id} `, (error, result, field) => {
+                        db.query(`UPDATE items SET name = '${name}', image_items='${dataImage}' , quantity = ${quantity}, price = ${price}, id_category_detail = ${id_category_detail}, id_restaurant = ${id_restaurant} where id = ${id} `, (error, result, field) => {
                             if (error) {
                                 resolve({ success: false, message: 'Query False' })
                             } else {

@@ -23,28 +23,29 @@ module.exports = {
         }
     },
 
-    updateItems: (id, name, quantity, price, id_category_detail, id_restaurant) => {
-        return new Promise((resolve, reject) => {
-            db.query(`SELECT Count(*) as total FROM items where id=${id}`, (error, result, field) => {
-                if (!error) {
-                    const { total } = result[0]
-                    if (total === 0) {
-                        resolve({ success: false, message: 'Id not found' })
-                    } else {
-                        db.query(`UPDATE items SET name= '${name}', quantity= ${quantity}, price= ${price}, id_category_detail= ${id_category_detail},id_restaurant=${id_restaurant} where id=${id}`, (error, result, field) => {
-                            if (error) {
-                                resolve({ success: false, message: 'Query False' })
-                            } else {
-                                resolve({ success: true, message: 'Data has been Updated' })
-                            }
-                        })
-                    }
-                }
-            })
-        })
-    },
+    // updateItems: (id, name, quantity, price, id_category_detail, id_restaurant, dataImage) => {
+    //     return new Promise((resolve, reject) => {
+    //         db.query(`SELECT Count(*) as total FROM items where id=${id}`, (error, result, field) => {
+    //             if (!error) {
+    //                 const { total } = result[0]
+    //                 if (total === 0) {
+    //                     resolve({ success: false, message: 'Id not found' })
+    //                 } else {
+    //                     db.query(`UPDATE items SET name= '${name}', image='${dataImage}',quantity= ${quantity}, price= ${price}, id_category_detail= ${id_category_detail},id_restaurant=${id_restaurant} where id=${id}`, (error, result, field) => {
+    //                         if (error) {
+    //                             resolve({ success: false, message: 'Query False' })
+    //                         } else {
+    //                             resolve({ success: true, message: 'Data has been Updated' })
+    //                         }
+    //                     })
+    //                 }
+    //             }
+    //         })
+    //     })
+    // },
 
-    update: (id, name, email, image, age, tall, weight) => {
+    update: (id, name, email, age, tall, weight, dataImage) => {
+        console.log(age)
         return new Promise((resolve, reject) => {
             var regex = /^\d+$/
 
@@ -68,7 +69,7 @@ module.exports = {
                         if (total === 0) {
                             resolve({ success: false, message: 'Id not found' })
                         } else {
-                            db.query(`UPDATE users_detail SET nama= '${name}', email= '${email}', image= '${image}', age= ${age}, tall= ${tall}, weight= ${weight} where id=${id}`, (error, result, field) => {
+                            db.query(`UPDATE users_detail SET nama= '${name}', email= '${email}',  image='${dataImage}' ,age= ${age}, tall= ${tall}, weight= ${weight} where id=${id}`, (error, result, field) => {
                                 if (error) {
                                     console.log('woi')
                                     resolve({ success: false, message: 'Query False' })

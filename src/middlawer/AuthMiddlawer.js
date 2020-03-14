@@ -8,16 +8,16 @@ function checkAuthToken(req, res, next) {
   } else {
     res.send({
       success: false,
-      msg: 'Not Authorized'
+      message: 'Not Authorized'
     })
   }
   try {
     req.auth = jwt.verify(token, process.env.APP_KEY)
     next()
-  } catch (e) {
+  } catch (error) {
     res.send({
       success: false,
-      msg: 'You not Login. Please login!'
+      message: 'You not Login. Please login!'
     })
   }
 }
