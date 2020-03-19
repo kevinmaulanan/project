@@ -2,9 +2,32 @@ const processItems = require('../models/items')
 const { paginate } = require('../pagination/pagination')
 const uploads = require('../multer/multer')
 
-const getItems = async (req, res) => {
+const getItemsCategory = async (req, res) => {
     const { id } = req.params
-    const { success, message, data } = await processItems.getItems(id)
+    const { success, message, data } = await processItems.getItemsCategory(id)
+    try {
+        if (success) {
+            res.send({
+                success: true,
+                message,
+                data
+            })
+        } else {
+            res.send({
+                success: false,
+                message
+            })
+        }
+    } catch (error) {
+        success,
+            message
+    }
+}
+
+
+const getItemsRestaurat = async (req, res) => {
+    const { id } = req.params
+    const { success, message, data } = await processItems.getItemsRestaurat(id)
     try {
         if (success) {
             res.send({
@@ -77,23 +100,29 @@ const updateItems = async (req, res) => {
     await uploads(req, res, 'images')
 
     req.body.images = '/uploads/' + req.file.filename
+    console.log(req.file.filename)
     const dataImage = req.body.images
     console.log(req.body)
     console.log(dataImage)
     const { id } = req.params
     console.log(id)
     const { name, quantity, price, id_category_detail, id_restaurant } = req.body
-    const data = await processItems.updateItems(id, name, quantity, price, id_category_detail, id_restaurant, dataImage)
-    if (data) {
-        res.send({
-            success: true,
-            data
-        })
-    } else {
-        res.send({
-            success: false,
-            msg: 'error'
-        })
+    const { success, message } = await processItems.updateItems(id, name, quantity, price, id_category_detail, id_restaurant, dataImage)
+    try {
+        console.log(success)
+        if (success) {
+            res.send({
+                success: true,
+                message
+            })
+        } else {
+            res.send({
+                success: false,
+                msg: 'error'
+            })
+        }
+    } catch (error) {
+        message
     }
 }
 
@@ -114,7 +143,8 @@ const deleteItems = async (req, res) => {
 }
 
 module.exports = {
-    getItems,
+    getItemsCategory,
+    getItemsRestaurat,
     getAllItems,
     addItems,
     updateItems,

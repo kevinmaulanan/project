@@ -6,10 +6,25 @@ module.exports = {
     Items: (id) => {
         if (id) {
             return new Promise((resolve, reject) => {
-                const query = `SELECT items.id, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where items.id=${id}`
+                const query = `SELECT items.id, category_detail.id, items.image_items, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where category_detail.id=${id}`
                 db.query(query, (error, result, field) => {
                     if (error) reject = new Error(error)
-                    resolve(result[0])
+                    resolve(result)
+                })
+            })
+        } else {
+            resolve(false)
+        }
+    },
+
+
+    ItemsByRestaurant: (idResto) => {
+        if (idResto) {
+            return new Promise((resolve, reject) => {
+                const query = `SELECT items.id, items.image_items, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where restaurant.id=${idResto}`
+                db.query(query, (error, result, field) => {
+                    if (error) reject = new Error(error)
+                    resolve(result)
                 })
             })
         } else {
@@ -20,7 +35,7 @@ module.exports = {
     Restaurant: (id) => {
         if (id) {
             return new Promise((resolve, reject) => {
-                const query = `SELECT id,restaurant, description, created_at FROM restaurant where id=${id}`
+                const query = `SELECT id,image_restaurant,restaurant, description, created_at FROM restaurant where id=${id}`
                 db.query(query, (error, result, field) => {
                     if (error) reject = new Error(error)
                     resolve(result[0])
@@ -41,7 +56,7 @@ module.exports = {
                 }
                 else {
                     const { total } = result[0]
-                    db.query(`SELECT items.id, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id ${conditions} ${paginate}`, (error, result) => {
+                    db.query(`SELECT items.id, items.image_items, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id ${conditions} ${paginate}`, (error, result) => {
                         if (error) {
                             resolve({ success: false, message: 'Query False' })
                         } else {
@@ -65,7 +80,7 @@ module.exports = {
                 }
                 else {
                     const { total } = result[0]
-                    db.query(`SELECT id, restaurant, description, created_at FROM restaurant ${conditions}${paginate}`, (error, result) => {
+                    db.query(`SELECT id, image_restaurant,restaurant, description, created_at FROM restaurant ${conditions}${paginate}`, (error, result) => {
                         if (error) {
                             resolve({ success: false, message: 'Query False' })
                         } else {

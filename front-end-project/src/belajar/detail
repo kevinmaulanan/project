@@ -1,0 +1,30 @@
+import 
+
+
+contructur(props){
+    super(props)
+    this.state = null
+}
+
+async componentDidMount(){
+await axios.get('/items/)
+this.state=   items.filter(o=>o.id===parseInt(this.props.params.id) )[0]
+}
+
+{
+    <>
+    {
+            {this.items &&(
+                <h3>{this.items.name}</h3>
+                <h3>{this.items.name}</h3>
+            )}
+    }
+    </> 
+}
+
+react fragment => <>
+
+source sirkuit conditon
+
+&& fungsinya adalah jika ada
+

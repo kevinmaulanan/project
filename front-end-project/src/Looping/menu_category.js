@@ -9,7 +9,7 @@ class MenuCategory extends Component {
     render() {
         return (
             <div>
-                <Link to='/items'  >  <DropdownItem>{this.props.category_detail}</DropdownItem></Link>
+                <Link to={`/items/${this.props.id}`}  >  <DropdownItem>{this.props.category_detail}</DropdownItem></Link>
                 <DropdownItem divider />
             </div>
         )

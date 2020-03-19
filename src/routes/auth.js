@@ -11,7 +11,7 @@ Auth.post('/login', (req, res) => {
     db.query(`SELECT COUNT(*) as total FROM user_privat where username='${username}'`, (error, result, field) => {
       const { total } = result[0]
       if (total === 0) {
-        res.send({
+        res.status(401).send({
           success: false,
           message: 'Username not Found '
         })
@@ -21,7 +21,7 @@ Auth.post('/login', (req, res) => {
           const comparePassword = bcrypt.compareSync(password, pwData)
           console.log(comparePassword)
           if (comparePassword === false) {
-            res.send(
+            res.status(401).send(
               {
                 success: false,
                 message: 'Wrong Password!!'
@@ -30,7 +30,7 @@ Auth.post('/login', (req, res) => {
             db.query(`SELECT user_privat.id, user_privat.username, users_detail.nama, users_detail.email, users_detail.image, users_detail.age, users_detail.tall, users_detail.weight, user_class.class_user, user_privat.id_users_detail FROM user_privat JOIN user_class ON user_privat.id_user_class = user_class.id JOIN users_detail ON user_privat.id_users_detail=users_detail.id where user_privat.username='${username}' `, (error, result, fields) => {
               console.log(result[0].class_user)
               if (error) {
-                res.send({ success: false, message: 'query false' })
+                res.status(401).send({ success: false, message: 'query false' })
               }
               else {
                 role = result[0].class_user
@@ -39,17 +39,20 @@ Auth.post('/login', (req, res) => {
                   const data = result[0]
                   console.log(data)
                   const getUser = { ...data }
+                  console.log(getUser)
                   const token = jwt.sign(getUser, process.env.APP_KEY, { expiresIn: '1h' })
                   res.send({
                     success: true,
                     message: 'Login Berhasil',
                     data: {
-                      token
+                      token,
+                      getUser
+
                     }
                   })
                 }
                 else {
-                  res.send({ success: false, message: 'Anda bukan UserAdmin, Admin atau Costumer' })
+                  res.status(401).send({ success: false, message: 'Anda bukan UserAdmin, Admin atau Costumer' })
                 }
               }
             })

@@ -8,6 +8,8 @@ import '../Asset/fileNavbar.css'
 
 import { Link } from 'react-router-dom'
 import Axios from 'axios'
+import jwt from 'jsonwebtoken'
+
 
 class Login extends Component {
     constructor(props) {
@@ -50,24 +52,16 @@ class Login extends Component {
         }
 
         else {
-
             Axios.post("http://localhost:3333/auth/login",
                 data)
                 .then(res => {
-                    console.log(res.data)
-
-                    if (res.status == 200) {
-                        try {
-                            localStorage.setItem('token', JSON.stringify(res.data.data.token))
-                            this.props.history.push('/restaurant')
-                        } catch (error) {
-                            console.log(res.data.message)
-                            alert(res.data.message)
-                        }
-                    }
+                    console.log(res)
+                    window.localStorage.setItem('token', res.data.data.token)
+                    this.props.history.push('/home', { from: 'login' })
                 })
-                .catch(res => {
-                    alert(res.data.message)
+                .catch(error => {
+                    console.log(error.response.data)
+                    alert(error.response.data.message)
                 })
         }
     }
@@ -106,7 +100,7 @@ class Login extends Component {
                                                 </form>
                                                 <hr></hr>
                                                 <div className="text-center">
-                                                    <Link to="/forgot-password"> Forgot Password?</Link>
+                                                    <Link to="/check-username"> Forgot Password?</Link>
                                                 </div>
                                                 <div className="text-center">
                                                     <Link to="/register" >  Create an Account!</Link>

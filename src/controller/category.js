@@ -1,8 +1,9 @@
 const processCategory = require('../models/category')
 const qs = require('qs')
+const upload = require('../multer/multer')
 
 const getCategory = async (req, res) => {
-    const { id } = req.body
+    const { id } = req.params
     const data = await processCategory.get(id)
     if (data) {
         res.send({
@@ -76,8 +77,13 @@ const getAllCategory = async (req, res) => {
 }
 
 const createCategory = async (req, res) => {
+    await upload(req, res, 'images')
+    req.body.images = '/uploads/' + req.file.filename
+    const dataImage = req.body.images
+    console.log(dataImage)
+
     const { category_detail, id_category } = req.body
-    const { success, message } = await processCategory.create(category_detail, id_category)
+    const { success, message } = await processCategory.create(category_detail, id_category, dataImage)
     try {
         if (success) {
             res.send({
@@ -96,8 +102,14 @@ const createCategory = async (req, res) => {
 }
 
 const updateCategory = async (req, res) => {
+    await upload(req, res, 'images')
+    req.body.images = '/uploads/' + req.file.filename
+    const dataImage = req.body.images
+
+
+
     const { id, category_detail, id_category } = req.body
-    const { success, message } = await processCategory.update(id, category_detail, id_category)
+    const { success, message } = await processCategory.update(id, category_detail, id_category, dataImage)
     console.log(success)
     try {
         if (success) {

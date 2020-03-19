@@ -6,7 +6,7 @@ function checkAuthToken(req, res, next) {
   if (token.startsWith('Bearer')) {
     token = token.slice(7, token.length)
   } else {
-    res.send({
+    res.status(401).send({
       success: false,
       message: 'Not Authorized'
     })
@@ -15,7 +15,7 @@ function checkAuthToken(req, res, next) {
     req.auth = jwt.verify(token, process.env.APP_KEY)
     next()
   } catch (error) {
-    res.send({
+    res.status(401).send({
       success: false,
       message: 'You not Login. Please login!'
     })

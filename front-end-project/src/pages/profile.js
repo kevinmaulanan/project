@@ -2,152 +2,316 @@ import React, { Component } from 'react'
 import Logo from '../Asset/logo.png'
 import { Link } from 'react-router-dom'
 import Kevin from '../Asset/kevin.jpg'
-import JumbotronCostume from '../Component/jumbotron'
-import JumbrotronCostume from '../Component/jumbotron'
+import Restaurant from '../Asset/restaurant.png'
+import Background from '../Asset/Background.jpg'
+import Axios from 'axios'
+import '@fortawesome/free-solid-svg-icons'
+import EditIcon from '../Asset/edit_icon.png'
+import Instagram from '../Asset/instagram_logo.svg'
+import { FaEdit, FaCode, FaCheck } from 'react-icons/fa'
+
 
 
 class Profile extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            dataProfile: {
+            },
+            ViewTopUp: {
+            },
+
+            topup: {
+            }
+        }
+
+    }
+    componentDidMount() {
+        this.getDataProfile()
+        this.getTopUp()
+        // console.log(this.state.dataProfile)
+    }
+
+    componentDidUpdate() {
+        if (this.state.dataProfile !== this.state.topup) {
+            this.getTopUp()
+        }
+    }
+
+    getDataProfile() {
+        Axios.get(`http://localhost:3333/profile`, { headers: { Authorization: 'Bearer ' + window.localStorage.getItem('token') } })
+            .then(res => {
+
+                this.setState({
+                    dataProfile: res.data.data
+                })
+            })
+            .catch(error => {
+
+            })
+    }
+
+
+    handleTopUp(event) {
+        this.setState({
+            topup: event.target.value
+        })
+    }
+
+
+    async handleSubmitTopUp(event) {
+        const data = {
+            topup: this.state.topup
+        }
+
+        await Axios.post(`http://localhost:3333/topup/add`, data, { headers: { Authorization: 'Bearer ' + window.localStorage.getItem('token') } })
+            .then(res => {
+
+                alert(res.data.message)
+            })
+            .catch(error => {
+
+                alert(error.response.data.message)
+            })
+    }
+
+
+    getTopUp() {
+        Axios.get(`http://localhost:3333/topup`, { headers: { Authorization: 'Bearer ' + window.localStorage.getItem('token') } })
+            .then(res => {
+                this.setState({
+                    ViewTopUp: res.data.data
+                })
+            })
+            .catch(error => {
+                alert(error.response)
+            })
+    }
+
+
     render() {
         return (
-            <div className="bg-secondary">
-                <div className="mb-5">
-                    <nav className="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-                        <Link to="/">    <a className="navbar-brand" >
-                            <img src={Logo} width="70" height="30" class="d-inline-block align-top" alt=""></img>
-                    KEVMAN
-                        </a></Link>
-                    </nav>
-                </div>
 
-                <div className="pb-2">
-                    <div class="container card o-hidden border-0 shadow-md my-5 ">
-                        <div class="card-body p-0 ">
-                            <div className="">
+
+
+            <div>
+                <div className="container" style={{ height: "2000px" }}>
+                    <div className="row">
+                        <div className="col">
+                            <h2>Info Profile</h2>
+                            <hr></hr>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-4">
+                            <div className="card shadow mb-5 bg-white rounded">
+                                <div className=" img-response">
+                                    <img src={Background} className="img-response" style={{ height: "200px", width: "350px" }}></img>
+                                    <div className="img-center">
+                                        <img src={Kevin} className="rounded-circle border border-light img-center mx-auto d-block" style={{ height: "160px", width: "160px", marginTop: "-85px", marginBottom: "20px" }}></img>
+                                    </div>
+
+                                    <h4 className="text-center">{this.state.dataProfile.nama}</h4>
+                                    <h5 className="text-center text-secondary">{this.state.dataProfile.email}</h5>
+                                    <div className="text-center m-3">
+                                        <div className="btn rounded-pill bg-warning text-white center-block" style={{}}>
+                                            <h2 className="text-center">Rp. {this.state.ViewTopUp.topup},- </h2>
+                                        </div>
+                                    </div>
+
+                                    <div className="text-center m-3">
+                                        Rp. <input min="0" type="number" style={{ height: "29px", width: "150px" }} onChange={(event) => { this.handleTopUp(event) }}></input>
+
+                                        <button type="submit" className="ml-2" onClick={(event) => this.handleSubmitTopUp(event)} >Top Up</button>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <div className="col-md-8 ">
+                            <div className="card shadow p-3 mb-5 bg-white rounded ">
                                 <div className="row">
-                                    <div className="col-6 col-md-5">
-                                        <h1 className="text-center"> Info Profile </h1>
+                                    <div className="col">
+                                        <div className="row ">
+
+                                            <Link>
+                                                <FaEdit style={{ height: "25px", width: "30px", marginRight: "5px" }} className="ml-2"></FaEdit>
+                                            </Link>
+
+                                            <Link>
+                                                <h5>Edit Profile</h5>
+                                            </Link>
+
+
+                                        </div>
+
+
+                                        <hr></hr>
                                     </div>
                                 </div>
 
-                                <hr></hr>
-
-                                <div className="row pb-5  ">
-                                    <div className="col-md-4 ml-3">
-                                        <div className="card o-hidden border-0 shadow-lg my-5">
-                                            <div className="card-body p-0">
-                                                <div className="text-center">
-                                                    <div className="row pt-4">
-                                                        <div className="col">
-                                                            <img src={Kevin} height="200" width="200" className="rounded-circle"></img>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row pt-2">
-                                                        <div className="col">
-                                                            <p><strong>Kevin Maulana Nasrullah</strong></p>
-                                                            <p>kevinmaulanan</p>
-                                                            <p>kevinmaulana2703</p>
-
-                                                        </div>
-
-                                                    </div>
-
-
-                                                </div>
-                                            </div>
+                                <div className="row">
+                                    <div className="col">
+                                        <div className="row">
+                                            <FaCheck style={{ height: "25px", width: "30px", marginRight: "5px" }} className="ml-2" /><h5 className="mb-2">Name</h5>
                                         </div>
-                                    </div>
-                                    <hr></hr>
-
-
-
-
-
-                                    <div className="col-md-7">
-                                        <div className="card o-hidden border-0 shadow-lg my-5 pl-4">
-                                            <div className="card-body p-0">
-                                                <div className="row">
-
-                                                    <div className="col-md-6">
-                                                    </div>
-                                                    <div className="col-sm-6 pt-2">
-                                                        <i className="fas fa-edit"></i>
-                                                        <button className="bg-primary text-white pl-2 pr-2">Edit Profile</button>
-                                                    </div>
-
-                                                </div>
-                                                <hr></hr>
-
-
-                                                <div className="row pt-2">
-                                                    <div className="col-md-6 ">
-                                                        <p className="" >Saldo</p>
-                                                        <button>Top Up</button>
-                                                    </div>
-                                                    <div className="col-sm-6">
-                                                        <p>20000</p>
-                                                    </div>
-
-                                                </div>
-                                                <hr></hr>
-
-                                                <div className="row">
-                                                    <div className="col-md-6">
-                                                        <p>Saldo</p>
-                                                    </div>
-                                                    <div className="col-sm-6">
-                                                        Kevin Maulana Nasrullah
-                                    </div>
-
-                                                </div>
-                                                <hr></hr>
-
-                                                <div className="row">
-                                                    <div className="col-md-6">
-                                                        Email :
-                                    </div>
-                                                    <div className="col-sm-6 col-md-6 col-md-6 col-xl-6">
-                                                        Kevin Maulana Nasrullah
-                                    </div>
-                                                </div>
-                                                <hr></hr>
-
-                                                <div className="row">
-                                                    <div className="col-md-6">
-                                                        Tall :
-                                    </div>
-                                                    <div className="col-sm-6 col-md-6 col-md-6 col-xl-6">
-                                                        Kevin Maulana Nasrullah
-                                    </div>
-                                                </div>
-                                                <hr></hr>
-
-                                                <div className="row">
-                                                    <div className="col-sm-6 col-md-6 col-md-6 col-xl-6">
-                                                        Age :
-                                    </div>
-                                                    <div className="col-sm-6 col-md-6 col-md-6 col-xl-6">
-                                                        Kevin Maulana Nasrullah
-                                    </div>
-                                                </div>
-                                                <hr></hr>
-
-                                                <div className="row">
-                                                    <div className="col-sm-6 col-md-6 col-md-6 col-xl-6">
-                                                        <p>Saldo</p>
-                                                    </div>
-                                                    <div className="col-sm-6 col-md-6 col-md-6 col-xl-6">
-                                                        Kevin Maulana Nasrullah
-                                    </div>
-                                                </div>
-                                                <hr></hr>
-                                            </div>
-                                        </div>
+                                        <h5 className="text-right text-primary">{this.state.dataProfile.nama}</h5>
+                                        <hr></hr>
                                     </div>
                                 </div>
+                                <div className="row">
+                                    <div className="col">
+                                        <div className="row">
+                                            <FaCheck style={{ height: "25px", width: "30px", marginRight: "5px" }} className="ml-2" /><h5 className="mb-2">Email</h5>
+                                        </div>
+                                        <h5 className="text-right text-primary">{this.state.dataProfile.email}</h5>
+                                        <hr></hr>
+                                    </div>
+                                </div>
+
+
+                                <div className="row">
+                                    <div className="col">
+                                        <div className="row">
+                                            <FaCheck style={{ height: "25px", width: "30px", marginRight: "5px" }} className="ml-2" /><h5 className="mb-3">Age</h5>
+                                        </div>
+                                        <h5 className="text-right text-primary">{this.state.dataProfile.age} Year</h5>
+                                        <hr></hr>
+
+                                    </div>
+                                </div>
+
+
+
+                                <div className="row">
+                                    <div className="col">
+                                        <div className="row">
+                                            <FaCheck style={{ height: "25px", width: "30px", marginRight: "5px" }} className="ml-2" />
+                                            <h5 className="mb-3">Tall</h5>
+                                        </div>
+                                        <i class="fas fa-edit"></i>
+                                        <h5 className="text-right text-primary">{this.state.dataProfile.tall} cm</h5>
+                                        <hr></hr>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col">
+                                        <div className="row">
+                                            <FaCheck style={{ height: "25px", width: "30px", marginRight: "5px" }} className="ml-2" />
+                                            <h5 className="mb-3">Weight</h5>
+                                        </div>
+                                        <h5 className="text-right text-primary">{this.state.dataProfile.weight} kg</h5>
+                                        <hr></hr>
+                                    </div>
+                                </div>
+
+
+
                             </div>
                         </div>
                     </div>
-                </div >
+
+
+                    {/* Update Profile */}
+                    <div className="col-md-8 ">
+                        <div className="card shadow p-3 mb-5 bg-white rounded ">
+                            <div className="row">
+                                <div className="col">
+                                    <div className="row ">
+
+                                        <Link>
+                                            <FaEdit style={{ height: "25px", width: "30px", marginRight: "5px" }} className="ml-2"></FaEdit>
+                                        </Link>
+
+                                        <Link>
+                                            <h5>Edit Profile</h5>
+                                        </Link>
+
+
+                                    </div>
+
+
+                                    <hr></hr>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col">
+                                    <div className="row">
+                                        <FaEdit style={{ height: "25px", width: "30px", marginRight: "5px" }} className="ml-2" />
+                                        <h5 className="mb-2">Name</h5>
+                                    </div>
+                                    <input type="text" value={this.state.dataProfile.nama} className="text-right text-primary"></input>
+                                    <hr></hr>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col">
+                                    <div className="row">
+                                        <FaEdit style={{ height: "25px", width: "30px", marginRight: "5px" }} className="ml-2" /><h5 className="mb-2">Email</h5>
+                                    </div>
+                                    <h5 className="text-right text-primary">{this.state.dataProfile.email}</h5>
+                                    <hr></hr>
+                                </div>
+                            </div>
+
+
+                            <div className="row">
+                                <div className="col">
+                                    <div className="row">
+                                        <FaEdit style={{ height: "25px", width: "30px", marginRight: "5px" }} className="ml-2" /><h5 className="mb-3">Age</h5>
+                                    </div>
+                                    <h5 className="text-right text-primary">{this.state.dataProfile.age} Year</h5>
+                                    <hr></hr>
+
+                                </div>
+                            </div>
+
+
+
+                            <div className="row">
+                                <div className="col">
+                                    <div className="row">
+                                        <FaEdit style={{ height: "25px", width: "30px", marginRight: "5px" }} className="ml-2" />
+                                        <h5 className="mb-3">Tall</h5>
+                                    </div>
+
+                                    <h5 className="text-right text-primary">{this.state.dataProfile.tall} cm</h5>
+                                    <hr></hr>
+                                </div>
+                            </div>
+
+
+                            <div className="row">
+                                <div className="col">
+                                    <div className="row">
+
+                                        <div className="col-md-8">
+                                            <FaEdit style={{ height: "25px", width: "30px", marginRight: "5px" }} className="" />
+                                            <h5 className="mb-3">Weight</h5>
+                                        </div>
+
+                                        <div className="col-md-4" style={{ marginTop: "30px" }}>
+                                            <input type="text" class="form-control" placeholder="Last name" style={{ border: "none", height: "60px", width: "200px" }} className="text-right"></input>
+                                        </div>
+                                    </div>
+
+                                    <hr></hr>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
+
+
+                </div>
             </div >
 
         )

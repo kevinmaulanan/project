@@ -17,6 +17,23 @@ const getItems = async (req, res) => {
     }
 }
 
+const getItemsByIdResto = async (req, res) => {
+    const { idResto } = req.params
+    const data = await processGuest.ItemsByRestaurant(idResto)
+    if (data) {
+        res.send({
+            success: true,
+            data
+        })
+    } else {
+        res.send({
+            success: false,
+            msg: 'error'
+        })
+    }
+}
+
+
 const getRestaurant = async (req, res) => {
     const { id } = req.params
     const data = await processGuest.Restaurant(id)
@@ -32,6 +49,9 @@ const getRestaurant = async (req, res) => {
         })
     }
 }
+
+
+
 
 const getCategory = async (req, res) => {
     const { id } = req.params
@@ -130,5 +150,6 @@ module.exports = {
     getCategory,
     getAllRestaurant,
     getAllItems,
-    getAllCategory
+    getAllCategory,
+    getItemsByIdResto
 }

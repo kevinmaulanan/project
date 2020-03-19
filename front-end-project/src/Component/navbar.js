@@ -22,26 +22,44 @@ import FileNavBar from '../Asset/fileNavbar.css'
 import Axios from 'axios'
 import MenuRestaurant from '../Looping/menu_Resto'
 import MenuCategory from '../Looping/menu_category'
-
-
+import Default_foto from '../Asset/Default_foto.png'
+import { FaUserCircle } from 'react-icons/fa'
 
 
 
 class CostumeNavBar extends Component {
+
+    logout() {
+        window.localStorage.removeItem('token')
+        this.props.history.push('/')
+    }
 
     constructor(props) {
         super(props)
         this.state = {
             get_all_restaurant: [],
             get_category: [],
+            getFoto: [
+                { Default_foto }
+            ],
+
+            isOpen: false
+
 
         }
     }
 
+    toogle() {
+        this.setState({ isOpen: true })
+    }
+
     componentDidMount() {
+
         this.getAllRestaurant()
         this.getCategory()
+        this.toogle()
     }
+
 
     getAllRestaurant() {
         Axios.get("http://localhost:3333/browse_restaurant")
@@ -51,7 +69,7 @@ class CostumeNavBar extends Component {
                     alert(res.data.message)
                 }
                 else {
-
+                    console.log('woi')
                     let getMenuRestaurant = res.data.result
                     this.setState({ get_all_restaurant: getMenuRestaurant })
                 }
@@ -82,11 +100,11 @@ class CostumeNavBar extends Component {
             <div>
                 <Navbar color="light" light expand="md">
                     <NavbarBrand href="/"><img src={Logo} width="100" height="50"></img> KEVMAN</NavbarBrand>
-                    <NavbarToggler />
-                    <Collapse navbar>
+                    <NavbarToggler onClick={this.toogle} />
+                    <Collapse isOpen={this.state.open} navbar>
                         <Nav className="mr-auto" navbar>
                             <NavItem>
-                                <NavLink href="/home">Home</NavLink>
+                                <Link to="/home" className="nav-link">Home</Link>
                             </NavItem>
                             <UncontrolledDropdown nav inNavbar>
                                 <DropdownToggle nav caret>
@@ -103,6 +121,8 @@ class CostumeNavBar extends Component {
                                             created_at={val.created_at}
                                         />
                                     ))}
+                                    <DropdownItem> <Link to="/restaurant"> All Restaurant </Link></DropdownItem>
+                                    <DropdownItem divider />
 
                                 </DropdownMenu>
                             </UncontrolledDropdown>
@@ -121,6 +141,8 @@ class CostumeNavBar extends Component {
                                             category_detail={val.category_detail}
                                         />
                                     ))}
+                                    <DropdownItem> <Link to="/items"> All Items </Link></DropdownItem>
+                                    <DropdownItem divider />
 
                                 </DropdownMenu>
                             </UncontrolledDropdown>
@@ -128,11 +150,30 @@ class CostumeNavBar extends Component {
                                 <Input className="" type="search" placeholder="Search" aria-label="Search"></Input>
                                 <Button className="btn btn-inline-success my-2 my-sm-0" type="submit">Search</Button>
                             </Form>
-
                         </Nav>
 
+
+
                         <Form className="form-inline my-2 my-lg-0 mr-5" >
-                            <Link to="/login">  <Button className="btn-success btn-inline-danger my-2 my-sm-0" type="submit" >Login</Button></Link>
+                            {this.props.isLogin &&
+                                <>
+                                    <Link to='/profile'>
+                                        <img src={Default_foto} style={{ height: "55px", width: "55px" }} className="mr-3 rounded-circle"></img>
+                                    </Link>
+
+                                    <NavLink className="btn btn-outline-success my-2 my-sm-0" onClick={this.logout} href='/login'>Logout</NavLink>
+                                </>
+                            }
+
+                            {!this.props.isLogin &&
+                                <>
+                                    <Link to='/login'>
+                                        <FaUserCircle style={{ height: "55px", width: "55px" }} className="mr-2"></FaUserCircle>
+                                    </Link>
+                                    <Link to='/login' className=' btn btn-outline-success my-2 my-sm-0'>Login</Link>
+
+                                </>
+                            }
                         </Form>
                     </Collapse>
                 </Navbar>

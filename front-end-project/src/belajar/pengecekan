@@ -1,0 +1,126 @@
+onChange={e=>this.inputChange(e,'username')}
+onChange={e=>this.inputChange(e,'password')}
+
+constracto(props){
+    super(props)
+    this.state={
+
+    }
+}
+
+login(){
+    if(this.state.username ==='admin' && this.state.password===='admin){
+
+    }
+}
+
+
+<div>
+
+</div>\\\
+
+npmsjs
+
+
+npm js-cookie
+history.push untuk menridercet
+
+
+stackoverflow history
+
+
+cookie.set ('role','id')
+this.props.hisotry.push('/about',)
+
+
+
+file about untuk chencking
+
+import cookie from 'js-cookie
+{
+    cookie.get('role) === 'admin' &&{
+        <>You are admin! </>
+    }
+
+    cookie.get('role) !== 'admin' &&{
+        <>You are admin! </>
+    }
+
+}
+
+
+atau
+
+
+componentDidMount(){
+    if(cookie.get('role)!=== 'admin'){
+        this.proops.history.push('/login')
+    }
+}
+
+
+
+
+Fungsi logout di navigation bar
+import history from ;..\
+
+
+constructur(props){
+    super(props)
+this.state -{
+    cookie : cookie.get('role')
+}
+}
+
+componentDidmout(){
+    tjos.setState({
+        cookiie:
+    })
+}
+
+logout(){
+    cookie.remove('role;)
+    history.push()
+}
+
+
+<Nav link>
+{coookie.get('role)&&
+<>
+<Nav item
+<NavLink onClick={this.logout}> 
+</> }
+
+
+==============================
+
+LocalStorange
+window.localStorage.setItems('jwt', 'abc')
+
+
+this.state :{
+    cookie : windows.localStorage.getItems('jwt)
+}
+
+lopgout(){
+    windows.localstorage.removeitem('jwt)
+}
+
+
+
+=========================
+
+componentDidMount(){
+    jwt.decode(window.loaclstotage.hetitem('jwt))
+
+    if(cread.username!=='admin){
+        this.props.push(/login)
+    }else{
+
+    }
+}
+
+
+
+jwt->app.js
+default login :false

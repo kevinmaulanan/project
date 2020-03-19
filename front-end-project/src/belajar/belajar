@@ -1,0 +1,29 @@
+<col key=
+
+
+
+
+Link to ={'/detail/${this.props.id}} className="btn btn-block btn-primary"
+
+btn-block => untuk menfull button
+
+
+* untuk menampilkan id pada saat klik
+
+import 
+
+
+untuk mengambil parlameter ke reacttraining router dom  pathname
+
+
+<Route path='/detail/:id' render={(proops)=><Detail}>
+
+<Detail adalah perulaangan utnuk menghasil kan id
+
+
+untuk mendapatkan id yang kita klik sebelumnya
+
+untuk mengecek console.log(req.params.id)
+
+
+<img className='img-fluid' style=({width:100%})>

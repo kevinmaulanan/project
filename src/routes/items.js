@@ -1,6 +1,6 @@
 const Items = require('express').Router()
 
-const { getItems, addItems, updateItems, deleteItems, getAllItems } = require('../controller/items')
+const { getItemsCategory, getItemsRestaurat, addItems, updateItems, deleteItems, getAllItems } = require('../controller/items')
 
 const { checkAuthToken } = require('../middlawer/AuthMiddlawer')
 const { checkAuthPermission } = require('../middlawer/AuthPermission')
@@ -11,7 +11,8 @@ Items.delete('/', checkAuthToken, checkAuthPermission, deleteItems)
 Items.patch('/:id', checkAuthToken, checkAuthPermission, updateItems)
 
 Items.get('/', checkAuthToken, checkAuthPermission, getAllItems)
-Items.get('/:id', checkAuthToken, checkAuthPermission, getItems)
+Items.get('/category/:id', checkAuthToken, checkAuthPermission, getItemsCategory)
+Items.get('/restaurant/:id', checkAuthToken, checkAuthPermission, getItemsRestaurat)
 // Items.get('/all/:searchItems', getItems)
 
 

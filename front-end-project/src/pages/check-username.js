@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-
+import { Button, Input } from 'reactstrap'
+import { Link } from 'react-router-dom'
+import Axios from 'axios'
 
 class CheckUsername extends Component {
 
@@ -7,60 +9,40 @@ class CheckUsername extends Component {
         super(props)
         this.state = {
             username: ''
-
         }
     }
 
-    handleUsername = (event) => {
+
+    handleCheckUsername = (event) => {
         this.setState({
             username: event.target.value
         })
     }
 
-
-    handleSubmitLogin = (event) => {
+    handleSubmit = (event) => {
         event.preventDefault()
-
         const data = {
-            username: this.state.username,
+            username: this.state.username
         }
-
-        if (this.state.username === "" && this.state.password === "") {
-            alert("Field tidak boleh kosong")
-        }
-        else if (this.state.username === "") {
-            alert("Usename tidak boleh kosong")
-        }
-        else if (this.state.password === "") {
-            alert("Password tidak boleh kosong")
-        }
-
-        else {
-
-            Axios.post("http://localhost:3333/verify",
-                data)
-                .then(res => {
-                    console.log(res.data)
-
-                    if (res.status == 200) {
-                        try {
-                            this.props.history.push('/forgot-password')
-                        } catch (error) {
-                            console.log(res.data.message)
-                            alert(res.data.message)
-                        }
-                    }
-                })
-                .catch(res => {
+        console.log(this.state.username)
+        Axios.post("http://localhost:3333/verify", data)
+            .then(res => {
+                console.log(res)
+                if (res.data.success === false) {
                     alert(res.data.message)
-                })
-        }
+                } else {
+                    alert("Copy Code ini " + res.data.Code)
+                    this.props.history.push('/forgot-password')
+                }
+            })
+            .catch(error => {
+                console.log('pppp')
+                console.log(error)
+                console.log(error.response)
+            })
     }
 
-
-
     render() {
-
 
         return (
             <div className="bg">
@@ -73,21 +55,21 @@ class CheckUsername extends Component {
                                         <div className="col-lg-10 mx-auto">
                                             <div className="p-4">
                                                 <div className="text-center">
-                                                    <h1 className="h4 text-gray-900 mb-4">LOGIN PAGE</h1>
+                                                    <h1 className="h4 text-gray-900 mb-4">CHECK USERNAME PAGE</h1>
                                                 </div>
                                                 <form className="user">
                                                     <div className="form-group">
-                                                        <Input type="text" name="username" className="form-control form-control-user" placeholder="Username..." onChange={(event) => { this.handleCheckUsername(event) }} ></Input>
+                                                        <Input type="text" name="username" className="form-control form-control-user" placeholder="Username..." onChange={(event) => this.handleCheckUsername(event)} ></Input>
 
                                                     </div>
 
 
-                                                    <Button className="btn btn-primary btn-user btn-block" onClick={(event) => this.handleSubmitLogin(event)} type="submit">Login</Button>
+                                                    <Button className="btn btn-primary btn-user btn-block" onClick={(event) => this.handleSubmit(event)} type="submit">Check Username</Button>
 
                                                 </form>
                                                 <hr></hr>
                                                 <div className="text-center">
-                                                    <Link to="/forgot-password"> Forgot Password?</Link>
+                                                    <Link to="/login"> Login</Link>
                                                 </div>
                                                 <div className="text-center">
                                                     <Link to="/register" >  Create an Account!</Link>

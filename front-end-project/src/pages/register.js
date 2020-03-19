@@ -4,37 +4,73 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import Axios from 'axios'
 import '../Asset/fileNavbar.css'
+import { Button } from 'reactstrap'
 
-class Login extends Component {
+class Register extends Component {
 
     constructor(props) {
         super(props)
         this.state = {
-            data_restaurant: []
+            name: '',
+            username: '',
+            password: '',
+            email: '',
         }
     }
 
-    componentDidMount() {
-        this.postRegister()
+
+    handleName = (event) => {
+        this.setState({
+            name: event.target.value
+        })
     }
 
-    postRegister() {
+    handleUsername = (event) => {
+        this.setState({
+            username: event.target.value
+        })
+    }
 
-        Axios.POST("http://localhost:3333/register")
+    handlePassword = (event) => {
+        this.setState({
+            password: event.target.value
+        })
+    }
+
+    handleEmail = (event) => {
+        this.setState({
+            email: event.target.value
+        })
+    }
+
+
+    handleSubmitRegister = (event) => {
+        event.preventDefault()
+
+        const data = {
+            name: this.state.name,
+            username: this.state.username,
+            password: this.state.password,
+            email: this.state.email
+        }
+        console.log(data)
+        Axios.post("http://localhost:3333/register", data)
             .then(res => {
-                if (res.data.success === false) {
-                    console.log('woidsa')
-                    alert(res.data.message)
+                console.log(res.data)
+                alert(res.data.msg)
+                if (res.data.success === true) {
+
+                    this.props.history.push('/login', { from: 'login' })
                 }
-                else {
-                    console.log(res)
-                    let dataArr = res.data.result
-                    this.setState({ data_restaurant: dataArr })
-                }
+
+            })
+            .catch(error => {
+                console.log(error)
+                console.log('wpo')
+                alert(error.response)
+
             })
     }
-
-
     render() {
         return (
 
@@ -53,23 +89,27 @@ class Login extends Component {
                                                 </div>
                                                 <form className="user">
                                                     <div className="form-group">
-                                                        <input type="text" name="username" className="form-control form-control-user" placeholder="Username..." onChange={(event) => { this.handleUsername(event) }}></input>
+                                                        <input type="text" name="name" className="form-control form-control-user" placeholder="Name..." onChange={(event) => { this.handleName(event) }}></input>
                                                     </div>
                                                     <div className="form-group">
-                                                        <input type="text" name="email" className="form-control form-control-user" placeholder="Email..." onChange={(event) => { this.handleEmail(event) }}></input>
+                                                        <input type="text" name="username" className="form-control form-control-user" placeholder="Username..." onChange={(event) => { this.handleUsername(event) }}></input>
                                                     </div>
                                                     <div className="form-group">
                                                         <input type="password" name="password" className="form-control form-control-user" placeholder="Password..." onChange={(event) => { this.handlePassword(event) }}></input>
                                                     </div>
-                                                    <Link to="/"><a href="" className="btn btn-primary btn-user btn-block">
+                                                    <div className="form-group">
+                                                        <input type="text" name="email" className="form-control form-control-user" placeholder="Email..." onChange={(event) => { this.handleEmail(event) }}></input>
+                                                    </div>
+
+                                                    <Button block type="submit" onClick={(event) => this.handleSubmitRegister(event)}>
                                                         Daftar
-                                                    </a></Link>
+                                                    </Button>
 
 
                                                 </form>
                                                 <hr></hr>
                                                 <div class="text-center">
-                                                    <Link to="/Login"> <a class="small" href="">Login Page</a></Link>
+                                                    <Link to="/login" > <a class="small" href="">Login Page</a></Link>
                                                 </div>
                                             </div>
                                         </div>
@@ -86,6 +126,6 @@ class Login extends Component {
 
 }
 
-export default Login
+export default Register
 
 

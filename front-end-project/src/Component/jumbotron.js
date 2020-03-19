@@ -2,27 +2,56 @@ import React, { Component } from 'react'
 import {
     Jumbotron,
     Button,
-    Container
+    Container,
+    NavLink,
+    Card,
+    CardBody,
+    CardText
 } from 'reactstrap'
 
 import Logo from '../Asset/logo.png'
 
 class JumbrotronCostume extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            restaurant: null
+        }
+    }
 
     render() {
         return (
-            <div className="text-center">
+            < div className="" >
+                <div>
+                    {this.state.restaurant &&
+                        <>
+                            <Jumbotron fluid className="" >
+                                <div>
+                                    <img src={Logo}></img>
+                                    <h1 className="display-3" className="h1">RESTAURANT KEVMAN</h1>
+                                    <p className="lead">Ini adalah Restaurant terbaik sedunia</p>
+                                </div>
+                            </Jumbotron>
+                        </>
+                    }
+                </div>
 
-                <Jumbotron fluid >
-                    <Container fluid>
-                        <img src={Logo}></img>
-                        <h1 className="display-3" className="h1">RESTAURANT KEVMAN</h1>
-                        <p className="lead">Ini adalah Restaurant terbaik sedunia</p>
-                    </Container>
+                <div>
+                    {!this.state.restaurant &&
+                        <>
 
-                </Jumbotron>
+                            <Jumbotron fluid  >
+                                <Container fluid>
+                                </Container>
+                            </Jumbotron>
 
-            </div>
+                        </>
+                    }
+                </div>
+
+
+            </div >
+
         )
     }
 }

@@ -50,11 +50,14 @@ module.exports = {
                         resolve({ success: false, message: 'username: ' + username + ' tidak ditemukan' })
                     } else {
                         db.query(`SELECT *FROM user_privat where username='${username}'`, (error, result, field) => {
-                            console.log(result)
-                            verifyCode = result[0].verify
-
-                            resolve({ success: true, message: 'username:' + username + ' is found', Code: verifyCode })
-
+                            if (error) {
+                                resolve({ success: false, message: 'Query False' })
+                            }
+                            else {
+                                console.log(result)
+                                verifyCode = result[0].verify
+                                resolve({ success: true, message: 'username:' + username + ' is found', Code: verifyCode })
+                            }
                         })
 
                     }

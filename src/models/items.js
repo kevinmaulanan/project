@@ -3,23 +3,23 @@ const { paginationParams } = require('../pagination/pagination')
 
 module.exports = {
 
-    getItems: (id) => {
+    getItemsCategory: (id) => {
         if (id) {
             return new Promise((resolve, reject) => {
-                const query = `SELECT COUNT(*) as total from items where id=${id}`
+                const query = `SELECT COUNT(*) as total from category_detail where id=${id}`
                 db.query(query, (error, result, fields) => {
                     const { total } = result[0]
                     if (total === 0) {
                         resolve({ success: false, message: 'ID not found' })
                     }
                     else {
-                        const query = `SELECT items.id, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where items.id=${id}`
+                        const query = `SELECT items.id, items.image_items, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where category_detail.id=${id}`
                         db.query(query, (error, result, field) => {
                             if (error) {
                                 resolve({ success: false, message: 'Query Error' })
                             }
                             else {
-                                const data = result[0]
+                                const data = result
                                 console.log(data)
                                 resolve({ success: true, message: 'Berhasil', data })
                             }
@@ -35,6 +35,41 @@ module.exports = {
         }
     },
 
+
+    getItemsRestaurat: (id) => {
+        if (id) {
+            return new Promise((resolve, reject) => {
+                const query = `SELECT COUNT(*) as total from restaurant where id=${id}`
+                db.query(query, (error, result, fields) => {
+                    const { total } = result[0]
+                    if (total === 0) {
+                        resolve({ success: false, message: 'ID not found' })
+                    }
+                    else {
+                        const query = `SELECT items.id, items.image_items, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where restaurant.id=${id}`
+                        db.query(query, (error, result, field) => {
+                            if (error) {
+                                resolve({ success: false, message: 'Query Error' })
+                            }
+                            else {
+                                const data = result
+                                console.log(data)
+                                resolve({ success: true, message: 'Berhasil', data })
+                            }
+                        })
+
+                    }
+                })
+
+            })
+        }
+        else {
+            resolve({ success: false, message: 'masukkan idnya' })
+        }
+    },
+
+
+
     getAllItems: (req) => {
         const { conditions, paginate } = paginationParams(req)
         return new Promise((resolve, reject) => {
@@ -47,7 +82,7 @@ module.exports = {
                         message: 'Query error'
                     })
                 } else {
-                    const query = `SELECT items.id, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id${conditions}${paginate}`
+                    const query = `SELECT items.id, items.image_items,restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id${conditions}${paginate}`
                     db.query(query, (error, result, field) => {
                         if (error) {
                             resolve({ success: false, message: 'Query Error' })
@@ -89,6 +124,12 @@ module.exports = {
 
     updateItems: (id, name, quantity, price, id_category_detail, id_restaurant, dataImage) => {
         return new Promise((resolve, reject) => {
+            console.log(id)
+            console.log(name)
+            console.log(quantity)
+            console.log(price)
+            console.log(id_category_detail)
+            console.log(id_restaurant)
             db.query(`SELECT Count(*) as total FROM items where id = ${id} `, (error, result, field) => {
                 if (!error) {
                     const { total } = result[0]
@@ -97,12 +138,17 @@ module.exports = {
                     } else {
                         db.query(`UPDATE items SET name = '${name}', image_items='${dataImage}' , quantity = ${quantity}, price = ${price}, id_category_detail = ${id_category_detail}, id_restaurant = ${id_restaurant} where id = ${id} `, (error, result, field) => {
                             if (error) {
+                                console.log(error)
+
                                 resolve({ success: false, message: 'Query False' })
                             } else {
+
                                 resolve({ success: true, message: 'Data has been Updated' })
                             }
                         })
                     }
+                } else {
+                    resolve({ success: false, message: 'id not found' })
                 }
             })
         })

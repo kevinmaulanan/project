@@ -21,6 +21,12 @@
 
 }
 
+.card:hover{
+    transform: translateY(-1rem);
+}
+
+
+
 .bg{
     background-size: cover;
     height: 1000px; 
@@ -51,26 +57,27 @@ margin-left: 20px;
 }
 
 
-.jumbotron {
+/* .jumbotron {
     position: relative;
+    /* background: url(gardin-bistro.jpg); */
+    /* opacity: 0.9;
+    min-height: 500px;
     width: 100%;
     height: 100%;
     background-size: cover;
-    font-size: 1rem;
+   
   
-}
+} */ */
 
-.img {
-    width: 70%;
-   }
+
 
 .card {
     width: 100%;
    }
 
 .about hr{
-    width: 200px;
-    border-top: 2px solid #beb6b6;
+    width: 300px;
+    border-top: 3px solid #beb6b6;
 }
 
 .guys{
@@ -81,4 +88,10 @@ margin-left: 20px;
     padding-top: 50px;
  min-height: 200px;
 }
+
+/* .img-response{
+    height: 100px !important;
+} */
+
+
 

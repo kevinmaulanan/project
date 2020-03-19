@@ -7,7 +7,7 @@ module.exports = {
                 db.query(`SELECT COUNT(*) as total FROM user_privat where id=${id}`, (error, result, field) => {
                     const { total } = result[0]
                     if (total === 1) {
-                        const query = `SELECT user_privat.id, users_detail.nama, users_detail.image, users_detail.age, users_detail.tall, users_detail.weight FROM user_privat JOIN users_detail ON user_privat.id_users_detail=users_detail.id WHERE user_privat.id=${id}`
+                        const query = `SELECT user_privat.id, users_detail.nama, users_detail.email, users_detail.image, users_detail.age, users_detail.tall, users_detail.weight, users_detail.topup FROM user_privat JOIN users_detail ON user_privat.id_users_detail=users_detail.id WHERE user_privat.id=${id}`
                         db.query(query, (error, result, field) => {
                             if (error) reject = new Error(error)
                             data = result[0]
@@ -213,23 +213,32 @@ module.exports = {
     tambahTopUp: (id, topup) => {
         console.log(id)
         return new Promise((resolve, reject) => {
-            db.query(`SELECT *FROM users_detail where id=${id}`, (error, result, field) => {
-                const mytopup = result[0].topup
-                const totaltopup = parseInt(mytopup) + parseInt(topup)
-                console.log(totaltopup)
-                if (!error) {
-                    db.query(`UPDATE users_detail set topup=${totaltopup} where id=${id}`, (error, result) => {
-                        if (error) {
-                            resolve({ success: false, message: 'query False' })
-                        } else {
-                            resolve({ success: true, message: 'Berhasil di topup', totaltopup })
+            if (topup < 0) {
+                resolve({ success: false, message: 'Input Top Up Tidak Boleh Negatif' })
+            } else {
+                if (topup == 0) {
+                    resolve({ success: false, message: 'Input Top Up Tidak Boleh Nol' })
+                } else {
+                    db.query(`SELECT *FROM users_detail where id=${id}`, (error, result, field) => {
+                        const mytopup = result[0].topup
+                        const totaltopup = parseInt(mytopup) + parseInt(topup)
+                        console.log(totaltopup)
+                        if (!error) {
+                            db.query(`UPDATE users_detail set topup=${totaltopup} where id=${id}`, (error, result) => {
+                                if (error) {
+                                    resolve({ success: false, message: 'query False' })
+                                } else {
+                                    resolve({ success: true, message: 'Berhasil di topup', totaltopup })
+                                }
+                            })
+                        }
+                        else {
+                            resolve({ success: false, message: 'Query False' })
                         }
                     })
                 }
-                else {
-                    resolve({ success: false, message: 'Query False' })
-                }
-            })
+            }
+
         })
 
     },
