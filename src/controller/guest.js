@@ -1,9 +1,26 @@
 const processGuest = require('../models/guest')
 const { paginate } = require('../pagination/pagination')
 
-const getItems = async (req, res) => {
+const getItemsbyIdCategory = async (req, res) => {
     const { id } = req.params
-    const data = await processGuest.Items(id)
+    const data = await processGuest.ItemsbyIdCategory(id)
+    if (data) {
+        res.send({
+            success: true,
+            data
+        })
+    } else {
+        res.send({
+            success: false,
+            msg: 'error'
+        })
+    }
+}
+
+
+const getItemsbyIdItems = async (req, res) => {
+    const { id } = req.params
+    const data = await processGuest.ItemsbyIdItems(id)
     if (data) {
         res.send({
             success: true,
@@ -146,10 +163,11 @@ const getAllRestaurant = async (req, res) => {
 
 module.exports = {
     getRestaurant,
-    getItems,
     getCategory,
     getAllRestaurant,
     getAllItems,
     getAllCategory,
-    getItemsByIdResto
+    getItemsbyIdCategory,
+    getItemsByIdResto,
+    getItemsbyIdItems
 }

@@ -128,6 +128,7 @@ const updateItems = async (req, res) => {
 
 const deleteItems = async (req, res) => {
     const { id } = req.body
+    console.log(id)
     const { success, message } = await processItems.deleteItemss(id)
     if (success) {
         res.send({

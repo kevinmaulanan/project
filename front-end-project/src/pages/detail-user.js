@@ -12,7 +12,7 @@ import { FaEdit, FaCode, FaCheck } from 'react-icons/fa'
 
 
 
-class Profile extends Component {
+class DetailUser extends Component {
 
     constructor(props) {
         super(props)
@@ -231,6 +231,7 @@ class Profile extends Component {
                                             <h5>Edit Profile</h5>
                                         </Link>
 
+
                                     </div>
 
 
@@ -317,4 +318,4 @@ class Profile extends Component {
     }
 }
 
-export default Profile
+export default DetailUser

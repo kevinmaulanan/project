@@ -1,6 +1,6 @@
 const generalUser = require('express').Router()
 
-const { getProfile, getMyProfile, updateMyProfile, getTopUp, addTopUp, getReview, getAllReviews, getCarts, createReviews, checkout } = require('../controller/generalUser')
+const { getProfile, getMyProfile, postCarts, updateMyProfile, getTopUp, addTopUp, getReview, getAllReviews, getCarts, deleteCart, createReviews, checkout } = require('../controller/generalUser')
 
 
 const { checkAuthToken } = require('../middlawer/AuthMiddlawer')
@@ -11,7 +11,10 @@ generalUser.get('/profile', getMyProfile)
 generalUser.get('/profile/:id', getProfile)
 generalUser.get('/topup', getTopUp)
 generalUser.post('/topup/add', addTopUp)
-generalUser.post('/carts', getCarts)
+
+generalUser.get('/carts', getCarts)
+generalUser.delete('/carts', deleteCart)
+generalUser.post('/carts/:id', postCarts)
 // generalUser.get('checkout', getCheckout)
 generalUser.get('/review', getReview)
 generalUser.get('/review/:id', getAllReviews)

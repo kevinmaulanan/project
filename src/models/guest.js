@@ -3,10 +3,24 @@ const { paginationParams } = require('../pagination/pagination')
 
 
 module.exports = {
-    Items: (id) => {
+    ItemsbyIdItems: (id) => {
         if (id) {
             return new Promise((resolve, reject) => {
-                const query = `SELECT items.id, category_detail.id, items.image_items, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where category_detail.id=${id}`
+                const query = `SELECT items.id, items.image_items, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where items.id=${id}`
+                db.query(query, (error, result, field) => {
+                    if (error) reject = new Error(error)
+                    resolve(result[0])
+                })
+            })
+        } else {
+            resolve(false)
+        }
+    },
+
+    ItemsbyIdCategory: (id) => {
+        if (id) {
+            return new Promise((resolve, reject) => {
+                const query = `SELECT items.id, items.id_category_detail , items.image_items, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where items.id_category_detail=${id}`
                 db.query(query, (error, result, field) => {
                     if (error) reject = new Error(error)
                     resolve(result)
@@ -21,7 +35,7 @@ module.exports = {
     ItemsByRestaurant: (idResto) => {
         if (idResto) {
             return new Promise((resolve, reject) => {
-                const query = `SELECT items.id, items.image_items, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where restaurant.id=${idResto}`
+                const query = `SELECT items.id, items.id_restaurant ,items.image_items, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where items.id_restaurant=${idResto}`
                 db.query(query, (error, result, field) => {
                     if (error) reject = new Error(error)
                     resolve(result)

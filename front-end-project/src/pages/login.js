@@ -60,7 +60,7 @@ class Login extends Component {
                     this.props.history.push('/home', { from: 'login' })
                 })
                 .catch(error => {
-                    console.log(error.response.data)
+                    console.log(error.response)
                     alert(error.response.data.message)
                 })
         }

@@ -5,17 +5,18 @@ const bcrypt = require('bcryptjs')
 
 
 const registerUser = async (req, res) => {
+
+  const { name, username, password, email, } = req.body
+  const encryptedPassword = bcrypt.hashSync(password)
+  console.log('woi')
+
+
+  const { success, message } = await Register.register(name, username, encryptedPassword, email)
   try {
-    const { name, username, password, email, } = req.body
-    const encryptedPassword = bcrypt.hashSync(password)
-
-
-    const { success, message } = await Register.register(name, username, encryptedPassword, email)
-    console.log(success)
     if (success) {
       res.send({ success: true, msg: 'Register has been created!' })
     } else {
-      res.send({ success: false, msg: message })
+      res.send({ success: false, message })
     }
   } catch (error) {
     res.send({ success: false, message })

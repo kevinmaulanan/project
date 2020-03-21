@@ -60,8 +60,8 @@ const updateMyProfile = async (req, res) => {
     console.log(req.body)
     const id = req.auth.id_users_detail
     console.log(id)
-    const { name, email, image, age, tall, weight } = req.body
-    const { data, success, message } = await processGeneralUser.update(id, name, email, image, age, tall, weight, dataImage)
+    const { name, email, age, tall, weight } = req.body
+    const { data, success, message } = await processGeneralUser.update(id, name, email, age, tall, weight, dataImage)
     try {
         if (success) {
             res.send({
@@ -248,11 +248,12 @@ const createReviews = async (req, res) => {
     }
 }
 
-const getCarts = async (req, res) => {
+const postCarts = async (req, res) => {
     const idUser = req.auth.id_users_detail
     const nameUser = req.auth.nama
-    const { idItems, quantity } = req.body
-    const { success, message, items, harga } = await processGeneralUser.cart(idItems, quantity, idUser, nameUser)
+    const idItems = req.params.id
+    const { quantity } = req.body
+    const { success, message, items, harga } = await processGeneralUser.postCart(idItems, quantity, idUser, nameUser)
     try {
         if (success) {
             res.send({
@@ -275,6 +276,55 @@ const getCarts = async (req, res) => {
 }
 
 
+const getCarts = async (req, res) => {
+    const idUser = req.auth.id_users_detail
+    const { success, message, data, total } = await processGeneralUser.getCart(idUser)
+    try {
+        if (success) {
+            res.send({
+                success,
+                message,
+                data,
+                total
+            })
+        } else {
+            res.send({
+                success,
+                message
+            })
+        }
+    } catch (error) {
+        res.send({
+            success,
+            message
+        })
+    }
+}
+
+const deleteCart = async (req, res) => {
+    const { idCart } = req.body
+    const { success, message, data, total } = await processGeneralUser.deleteCart(idCart)
+    try {
+        if (success) {
+            res.send({
+                success,
+                message,
+                data,
+                total
+            })
+        } else {
+            res.send({
+                success,
+                message
+            })
+        }
+    } catch (error) {
+        res.send({
+            success,
+            message
+        })
+    }
+}
 const checkout = async (req, res) => {
     const { idCart } = req.body
     const { success, message, SisaTopup } = await processGeneralUser.ProcessCheckOut(idCart)
@@ -308,7 +358,9 @@ module.exports = {
     getReview,
     getAllReviews,
     createReviews,
+    postCarts,
     getCarts,
-    checkout
+    checkout,
+    deleteCart
 
 }

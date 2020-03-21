@@ -9,17 +9,23 @@ import Restaurant from './pages/restaurant'
 import Items from './pages/items'
 import ForgotPassword from './pages/forgot-password'
 import Profile from './pages/profile'
-import JumbrotronCostume from './Component/jumbotron'
+
 import history from './utility/history'
 import CostumeNavBar from './Component/navbar'
 import DetailRestaurant from './pages/detail-restaurant'
-import Rumah from './pages/rumah'
+import DetailItems from './pages/detail-items'
+
 import CheckUsername from './pages/check-username'
+
 import EditProfile from './pages/edit-profile'
+import EditUser from './pages/edit-user'
 import EditItems from './pages/edit-items'
 import EditRestaurant from './pages/edit-restaurant'
-import DetailItems from './pages/detail-items'
+
+
+import DetailCategory from './pages/detail-category'
 import FooterCostume from './Component/Footer'
+import Category from './pages/category'
 
 class App extends React.Component {
 
@@ -64,11 +70,20 @@ class App extends React.Component {
             {/* <Route exact path="/" render={(props) => (<Main {...props} />)} /> */}
             <Route exact path="/" render={(props) => <Home {...props} />} />
             <Route exact path="/home" render={(props) => <Home {...props} />} />
+
+
+            <Route path="/edit-user" render={(props) => <EditUser {...props} />} exact />
             <Route path="/edit-profile" render={(props) => <EditProfile {...props} />} exact />
+
             <Route path="/restaurant" render={(props) => <Restaurant {...props} />} isLogin={this.state.login} exact />
             <Route path="/restaurant/:id" render={(props) => <DetailRestaurant {...props} />} exact />
+
             <Route path="/items" render={(props) => <Items {...props} />} exact />
             <Route path="/items/:id" render={(props) => <DetailItems {...props} />} exact />
+
+            <Route path="/category" render={(props) => <Category {...props} />} exact />
+            <Route path="/category/:id" render={(props) => <DetailCategory {...props} />} exact />
+
             <Route path="/edit-items" render={(props) => <EditItems {...props} />} exact />
             <Route path="/edit-restaurant" render={(props) => <EditRestaurant {...props} />} exact />
           </Switch>

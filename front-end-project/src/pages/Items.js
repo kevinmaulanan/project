@@ -2,10 +2,9 @@ import React, { Component } from 'react'
 
 import ItemsCostume from '../Looping/items'
 import Axios from 'axios'
-import jwt from 'jsonwebtoken'
+
 import { Container, Row } from 'reactstrap'
-import CostumeNavBar from '../Component/navbar'
-import JumbrotronCostume from '../Component/jumbotron'
+
 
 class Items extends Component {
 

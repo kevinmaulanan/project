@@ -49,6 +49,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             var regex = /^\d+$/
 
+
             if (regex.test(age) === false) {
                 resolve({ success: false, message: 'Age Harus Angka' })
                 return;
@@ -222,7 +223,7 @@ module.exports = {
                     db.query(`SELECT *FROM users_detail where id=${id}`, (error, result, field) => {
                         const mytopup = result[0].topup
                         const totaltopup = parseInt(mytopup) + parseInt(topup)
-                        console.log(totaltopup)
+
                         if (!error) {
                             db.query(`UPDATE users_detail set topup=${totaltopup} where id=${id}`, (error, result) => {
                                 if (error) {
@@ -243,40 +244,88 @@ module.exports = {
 
     },
 
-    cart: (idItems, quantity, idUsers, nameUser) => {
-        console.log(idItems)
-        console.log(quantity)
+    postCart: (idItems, quantity, idUsers, nameUser) => {
         return new Promise((resolve, reject) => {
-            console.log(parseInt(quantity))
-            db.query(`SELECT COUNT(*) as total FROM items where id = ${idItems}`, (error, result, field) => {
+            if (quantity < 1) {
+                resolve({ success: false, message: ' Quantity tidak boleh kurang dari 1' })
+            }
+            else {
+                db.query(`SELECT COUNT(*) as total FROM items where id = ${idItems}`, (error, result, field) => {
+                    const { total } = result[0]
+                    console.log(result)
+                    if (total != 1) {
+                        resolve({ success: false, message: 'Id items Not Found' })
+                    } else {
+                        db.query(`SELECT * FROM items where id = ${idItems}`, (error, result, field) => {
+                            if (error) {
+                                resolve({ success: false, message: 'Query False' })
+                            } else {
+                                const harga = result[0].price
+                                const nameItems = result[0].name
+                                const totalItems = harga * quantity
+
+
+                                db.query(`INSERT INTO carts(name_items, name_user, buy_quantity, result, id_items, id_users_detail) VALUES('${nameItems}', '${nameUser}', ${quantity}, ${totalItems}, ${idItems}, ${idUsers})`, (error, result, field) => {
+                                    if (error) {
+                                        resolve({ success: false, message: 'Query Falsee' })
+                                    } else {
+
+
+                                        resolve({ success: true, message: 'Berhasil', items: nameItems, harga: totalItems })
+                                    }
+                                })
+                            }
+                        })
+                    }
+
+                })
+            }
+        })
+    },
+
+
+    deleteCart: (idCart) => {
+        return new Promise((resolve, reject) => {
+            console.log(idCart)
+            db.query(`SELECT COUNT(*) as total FROM carts where id = ${idCart} && carts.transaksi=0`, (error, result, field) => {
                 const { total } = result[0]
-                if (total != 1) {
-                    resolve({ success: false, message: 'Id items Not Found' })
+                if (total < 1) {
+                    resolve({ success: false, message: 'Tidak Ada Cart' })
                 } else {
-                    db.query(`SELECT * FROM items where id = ${idItems}`, (error, result, field) => {
+                    db.query(`DELETE FROM carts where id=${idCart} `, (error, result, field) => {
                         if (error) {
                             resolve({ success: false, message: 'Query False' })
                         } else {
-                            const harga = result[0].price
-                            const nameItems = result[0].name
-                            const totalItems = harga * quantity
-                            console.log(nameUser)
-
-                            db.query(`INSERT INTO carts(name_items, name_user, buy_quantity, result, id_items, id_users_detail) VALUES('${nameItems}', '${nameUser}', ${quantity}, ${totalItems}, ${idItems}, ${idUsers})`, (error, result, field) => {
-                                if (error) {
-                                    resolve({ success: false, message: 'Query Falsee' })
-                                } else {
-
-
-                                    resolve({ success: true, message: false, items: nameItems, harga: totalItems })
-                                }
-                            })
+                            resolve({ success: true, message: 'ID: ' + idCart + ' Sudah Terhapus' })
                         }
                     })
                 }
-
             })
         })
+
+    },
+
+    getCart: (idUsers) => {
+        return new Promise((resolve, reject) => {
+            db.query(`SELECT COUNT(*) as total FROM carts where id_users_detail = ${idUsers} && carts.transaksi=0`, (error, result, field) => {
+                const { total } = result[0]
+                if (error) {
+                    resolve({ success: false, message: 'Login terlebih dahulu' })
+                } else {
+
+                    db.query(`SELECT carts.id, carts.name_items, items.image_items, carts.buy_quantity, carts.result, carts.transaksi FROM carts JOIN items ON carts.id_items= items.id WHERE carts.id_users_detail=${idUsers} && carts.transaksi=0`, (error, result, field) => {
+                        if (error) {
+                            resolve({ success: false, message: 'Query False' })
+                        } else {
+                            const data = result
+
+                            resolve({ success: true, message: 'Berhasil', data, total })
+                        }
+                    })
+                }
+            })
+        })
+
     },
 
 
@@ -286,20 +335,11 @@ module.exports = {
                 if (error) {
                     resolve({ success: false, message: 'query error' })
                 } else {
-                    idItems = result[0].id_items
-                    idUsers = result[0].id_users_detail
-                    quantity = result[0].buy_quantity
-
                     if (result[0].transaksi === 1) {
                         resolve({ success: false, message: 'Sudah tranksaksi' })
                     }
                     else {
                         db.query(`SELECT * FROM items where id = ${idItems}`, (error, result) => {
-                            const quantityItems = result[0].quantity
-                            const priceItems = result[0].price
-                            console.log(result)
-                            console.log(quantity)
-                            console.log('Woi')
                             const totalPrice = priceItems * quantity
                             if (quantityItems < quantity) {
                                 resolve({ success: false, message: 'Barangnnya Kurang' })
@@ -313,9 +353,7 @@ module.exports = {
                                             resolve({ success: false, message: 'Saldo Kurang' })
                                         } else {
                                             const sisaTransaksi = topup - totalPrice
-                                            console.log(sisaTransaksi)
-                                            console.log(topup)
-                                            console.log(totalPrice)
+
                                             const sisaBarang = quantityItems - quantity
                                             db.query(` UPDATE users_detail set topup = ${sisaTransaksi} where id = ${idUsers}`, (error, result) => {
                                                 if (error) {

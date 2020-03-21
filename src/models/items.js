@@ -13,7 +13,7 @@ module.exports = {
                         resolve({ success: false, message: 'ID not found' })
                     }
                     else {
-                        const query = `SELECT items.id, items.image_items, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where category_detail.id=${id}`
+                        const query = `SELECT items.id, items.id_category_detail, items.image_items, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where items.id_category_detail=${id}`
                         db.query(query, (error, result, field) => {
                             if (error) {
                                 resolve({ success: false, message: 'Query Error' })
@@ -46,7 +46,7 @@ module.exports = {
                         resolve({ success: false, message: 'ID not found' })
                     }
                     else {
-                        const query = `SELECT items.id, items.image_items, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where restaurant.id=${id}`
+                        const query = `SELECT items.id, items.id_restaurant, items.image_items, restaurant.restaurant, category.category, category_detail.category_detail, items.name, items.quantity, items.price, items.created_at FROM items JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where items.id_restaurant=${id}`
                         db.query(query, (error, result, field) => {
                             if (error) {
                                 resolve({ success: false, message: 'Query Error' })
@@ -156,6 +156,7 @@ module.exports = {
 
 
     deleteItemss: (id) => {
+        console.log(id, + "disini")
         return new Promise((resolve, reject) => {
             db.query(`SELECT COUNT(*) as total FROM items where id = ${id} `, (error, result, field) => {
                 if (!error) {
@@ -163,8 +164,9 @@ module.exports = {
                     if (total === 0) {
                         resolve({ success: false, message: 'ID not Found' })
                     } else {
-                        db.query(`Delete FROM items where id = ${id} `, (error, result, field) => {
+                        db.query(`DELETE FROM items where id=${id} `, (error, result, field) => {
                             if (error) {
+                                console.log(error)
                                 resolve({ success: false, message: 'failed to delete failed due to an error in the query' })
                             } else {
                                 resolve({ success: true, message: 'Data has been deleted' })

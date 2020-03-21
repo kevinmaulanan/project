@@ -35,6 +35,7 @@ app.use(cors())
 
 app.use('/user', checkAuthToken, User)
 app.use('/restaurant', Restaurant)
+app.use('/migration', migration)
 
 app.use('/items', Items)
 app.use('/auth', Auth)
@@ -47,7 +48,6 @@ app.use('/', checkAuthToken, generalUser)
 
 
 
-app.use('/migration', migration)
 
 app.get('/', (req, res) => {
     res.send('Server is Running')

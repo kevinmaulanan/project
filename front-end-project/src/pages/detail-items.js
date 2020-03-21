@@ -1,34 +1,72 @@
 import React, { Component } from 'react'
-import { Col, CardImg, CardTitle, CardSubtitle, Container } from 'reactstrap'
+import { Col, Modal, ModalBody, ModalHeader } from 'reactstrap'
 
 import Axios from 'axios'
 import ItemsCostume from '../Looping/items'
+import { FaShoppingCart } from 'react-icons/fa'
 
 export default class DetailItems extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            items: null,
+            items: [],
             all_items: [
 
             ],
+            modalAddCart: false,
+            QuantityCart: null,
+            cartAdd: [
+
+            ],
+
+            id_params: this.props.match.params.id
         }
+        this.toogleAddCart = this.toogleAddCart.bind(this)
+
 
     }
 
-    componentDidMount() {
+    toogleAddCart() {
+        this.setState({ modalAddCart: !this.state.modalAddCart })
+    }
+
+    async componentDidMount() {
         this.getItemsById(this.props.match.params.id)
         this.getDataItems()
-        console.log(this.state)
     }
 
 
-    componentDidUpdate(items) {
-        if (items.id !== this.props.match.params.id) {
+    componentDidUpdate() {
+        if (this.state.items.id != this.props.match.params.id) {
             this.getItemsById(this.props.match.params.id)
         }
+
     }
 
+    handleAddCart = (event) => {
+        this.setState({ QuantityCart: event.target.value })
+    }
+
+
+    async handleSubmitAddCart() {
+        const data = {
+            quantity: this.state.QuantityCart
+        }
+        try {
+
+            let res = await Axios.post(`http://localhost:3333/carts/${this.state.id_params}`, data, { headers: { Authorization: "Bearer " + window.localStorage.getItem('token') } })
+
+            if (res.data.success === false) {
+                alert(res.data.message)
+            } else {
+                console.log(res.data)
+                this.setState({ modalAddCart: !this.state.modalAddCart })
+                alert(res.data.success)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     getItemsById(id) {
         Axios.get(`http://localhost:3333/browse_items/items/${id}`)
@@ -43,7 +81,6 @@ export default class DetailItems extends Component {
         Axios.get("http://localhost:3333/browse_items?sort[name]=1")
             .then(res => {
                 let dataAllItems = res.data.result
-                console.log(dataAllItems)
                 this.setState({ all_items: dataAllItems })
             })
     }
@@ -61,7 +98,7 @@ export default class DetailItems extends Component {
                     <div className="container">
                         < div className="row about text-center">
                             <div className="col-sm-12">
-                                <h2 className="">Search Items : {this.state.items[0].category_detail}
+                                <h2 className=""> Items : {this.state.items.name}
                                     <hr ></hr>
                                 </h2>
                             </div>
@@ -70,24 +107,43 @@ export default class DetailItems extends Component {
 
 
 
-                        <div className="container">
-                            <div className="row ml-4 mr-5">
-                                {this.state.items.map((v, i) => (
-                                    <Col sm={3} className="mb-3">
-                                        <div className="card">
-                                            <CardImg src={`http://localhost:3333${v.image_items}`} style={{ height: "150px", width: "222px", overflow: "hidden" }} alt='Items' />
-                                            <CardTitle className=" ml-2 mt-2"> <small className=" text-success">Restaurant {v.restaurant}</small></CardTitle>
-                                            <div className="ml-2">
-                                                <CardTitle> <h5 className="text-dark">{v.name}</h5></CardTitle>
-                                                <CardSubtitle className="mt-1 mb-1 text-danger">Rp.{v.price},-</CardSubtitle>
+
+                        <div className="row ml-2 mr-2 mt-4">
+
+                            <Col sm={7} className="mb-3">
+                                <img src={`http://localhost:3333${this.state.items.image_items}`} style={{ height: "350px", width: "580px", overflow: "hidden" }} alt='Items' />
+                            </Col>
+                            <Col sm={5}>
+                                <div className="ml-2 mt-3">
+                                    <h6 className=" text-success"> {this.state.items.restaurant}</h6>
+                                    <h1 className="text-dark">{this.state.items.name}</h1>
+                                    <h5 className="mt-1 mb-2 text-secondary">{this.state.items.category_detail}</h5>
+                                    <h4 className="mt-1 mb-2 text-danger">Rp.{this.state.items.price},-</h4>
+                                    <div className="btn btn-success btn-lg mr-1" style={{ width: "100px" }} onClick={this.toogleAddCart}>
+                                        <FaShoppingCart style={{ height: "30px", width: "30px" }} >
+
+                                        </FaShoppingCart>
+
+                                        <Modal size="sm" className="mt-5 modal-dialog-centered" isOpen={this.state.modalAddCart} toggle={this.toogleAddCart} >
+                                            <div className="mr-5 ml-5">
+                                                <ModalHeader toggle={this.toogleAddCart} >Quantity</ModalHeader>
+                                                <ModalBody>
+                                                    <div className="text-center">
+                                                        <input min="0" type="number" style={{ height: "29px", width: "50px" }} onChange={(event) => this.handleAddCart(event)}></input>
+
+                                                        <button type="submit" className="ml-2" onClick={(event) => this.handleSubmitAddCart(event)}  >Add Cart</button>
+
+                                                    </div>
+                                                </ModalBody>
                                             </div>
-                                        </div>
-                                    </Col >
-                                ))}
-                            </div>
+                                        </Modal>
+
+                                    </div>
+                                </div>
+                            </Col >
+
+
                         </div>
-
-
 
 
                         < div className="row about text-center" style={{ marginTop: "110px" }}>

@@ -3,10 +3,15 @@ const uuidv1 = require('uuid').v1
 
 
 module.exports = {
-     register: (name, username, password, email) => {
+     register: (name, username, encryptedPassword, email) => {
           return new Promise((resolve, reject) => {
+               console.log(name)
+               console.log(username)
+               console.log(encryptedPassword)
+               console.log(email)
+               console.log('woi')
 
-               if (name === "" || username === "" || password === "" || email === "") {
+               if (name === "" || username === "" || encryptedPassword === "" || email === "") {
                     resolve({ success: false, message: 'Field tidak boleh kosong' })
                }
                else {
@@ -42,7 +47,7 @@ module.exports = {
                                                                                                          const maxId = results[0].id
                                                                                                          const verify = uuidv1()
 
-                                                                                                         db.query(`INSERT INTO user_privat(username, password, id_users_detail, id_user_class, verify) VALUES('${username}','${password}',${maxId},3,'${verify}')`, (error, results, fields) => {
+                                                                                                         db.query(`INSERT INTO user_privat(username, password, id_users_detail, id_user_class, verify) VALUES('${username}','${encryptedPassword}',${maxId},3,'${verify}')`, (error, results, fields) => {
                                                                                                               if (error) {
                                                                                                                    resolve({ success: false, message: 'saa' })
                                                                                                               } else {
@@ -65,12 +70,15 @@ module.exports = {
                                                                       })
                                                             }
                                                        } else {
-                                                            reject(new Error(error))
+                                                            resolve({ success: false, message: "salah woii" })
                                                        }
                                                   })
                                         }
                                    }
+                              } else {
+                                   resolve({ success: false, message: "salah woi" })
                               }
+
                          }
                     )
                }
