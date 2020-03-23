@@ -25,7 +25,7 @@ class CheckUsername extends Component {
             username: this.state.username
         }
         console.log(this.state.username)
-        Axios.post("http://localhost:3333/verify", data)
+        Axios.post(`${process.env.REACT_APP_API_URL}/verify`, data)
             .then(res => {
                 console.log(res)
                 if (res.data.success === false) {

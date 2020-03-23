@@ -124,12 +124,7 @@ module.exports = {
 
     updateItems: (id, name, quantity, price, id_category_detail, id_restaurant, dataImage) => {
         return new Promise((resolve, reject) => {
-            console.log(id)
-            console.log(name)
-            console.log(quantity)
-            console.log(price)
-            console.log(id_category_detail)
-            console.log(id_restaurant)
+
             db.query(`SELECT Count(*) as total FROM items where id = ${id} `, (error, result, field) => {
                 if (!error) {
                     const { total } = result[0]

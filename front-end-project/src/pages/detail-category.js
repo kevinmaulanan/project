@@ -32,7 +32,7 @@ export default class DetailCategory extends Component {
 
 
     getItemsById(id) {
-        Axios.get(`http://localhost:3333/browse_items/category/${id}`)
+        Axios.get(`${process.env.REACT_APP_API_URL}/browse_items/category/${id}`)
             .then(res => {
                 let dataItems = res.data.data
                 this.setState({ items: dataItems })
@@ -41,7 +41,7 @@ export default class DetailCategory extends Component {
 
 
     getDataItems() {
-        Axios.get("http://localhost:3333/browse_items?sort[name]=1")
+        Axios.get(`${process.env.REACT_APP_API_URL}/browse_items?sort[name]=1`)
             .then(res => {
                 let dataAllItems = res.data.result
                 console.log(dataAllItems)
@@ -77,7 +77,7 @@ export default class DetailCategory extends Component {
                                     <Col sm={3} className="mb-3">
                                         <Link to={`/items/${v.id}`}>
                                             <div className="card">
-                                                <CardImg src={`http://localhost:3333${v.image_items}`} style={{ height: "150px", width: "222px", overflow: "hidden" }} alt='Items' />
+                                                <CardImg src={`${process.env.REACT_APP_API_URL}${v.image_items}`} style={{ height: "150px", width: "222px", overflow: "hidden" }} alt='Items' />
                                                 <CardTitle className=" ml-2 mt-2"> <small className=" text-success">Restaurant {v.restaurant}</small></CardTitle>
                                                 <div className="ml-2">
                                                     <CardTitle> <h5 className="text-dark">{v.name}</h5></CardTitle>

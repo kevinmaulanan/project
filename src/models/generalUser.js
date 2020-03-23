@@ -11,7 +11,6 @@ module.exports = {
                         db.query(query, (error, result, field) => {
                             if (error) reject = new Error(error)
                             data = result[0]
-                            console.log(data)
                             resolve({ data, success: true, message: 'berhasil' })
                         })
                     }
@@ -45,7 +44,6 @@ module.exports = {
     // },
 
     update: (id, name, email, age, tall, weight, dataImage) => {
-        console.log(age)
         return new Promise((resolve, reject) => {
             var regex = /^\d+$/
 
@@ -63,7 +61,6 @@ module.exports = {
                 return;
             }
             else {
-                console.log(regex.test(tall))
                 db.query(`SELECT COUNT(*) as total FROM users_detail where id=${id}`, (error, result, field) => {
                     if (!error) {
                         const { total } = result[0]
@@ -72,7 +69,6 @@ module.exports = {
                         } else {
                             db.query(`UPDATE users_detail SET nama= '${name}', email= '${email}',  image='${dataImage}' ,age= ${age}, tall= ${tall}, weight= ${weight} where id=${id}`, (error, result, field) => {
                                 if (error) {
-                                    console.log('woi')
                                     resolve({ success: false, message: 'Query False' })
                                 } else {
                                     resolve({ success: true, message: 'Data has been Updated' })
@@ -96,22 +92,18 @@ module.exports = {
                 db.query(query, (error, result, field) => {
                     if (error) reject = new Error(error)
                     data = result[0]
-                    console.log(data)
                     resolve({ data, success: true, message: 'berhasil' })
                 })
             })
         }
     },
 
-    getMyReviews: (id) => {
+    getReviewsByIdItem: (id) => {
         return new Promise((resolve, reject) => {
-            const query = `SELECT reviews.id, restaurant.restaurant, category.category, category_detail.category_detail, items.name, users_detail.nama, reviews.comment from reviews join items on reviews.id_items=items.id join users_detail on reviews.id_users_detail= users_detail.id JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id
-                WHERE reviews.id_users_detail=${id}`
+            const query = `SELECT reviews.id, restaurant.restaurant, category.category, category_detail.category_detail, items.name, users_detail.nama, users_detail.image, reviews.comment,reviews.id_items from reviews join items on reviews.id_items=items.id join users_detail on reviews.id_users_detail= users_detail.id JOIN category_detail ON category_detail.id=items.id_category_detail JOIN category ON category.id=category_detail.id_category JOIN restaurant ON items.id_restaurant=restaurant.id where reviews.id_items=${id}`
             db.query(query, (error, result, field) => {
                 if (error) {
                     resolve({ data, success: false, message: 'berhasil' })
-
-                    console.log(data)
                 }
                 else {
                     data = result
@@ -136,7 +128,6 @@ module.exports = {
 
             db.query(query, (error, result) => {
                 if (error) {
-                    console.log('owi')
                     resolve({ success: false, message: 'query false' })
                 }
                 else {
@@ -181,22 +172,20 @@ module.exports = {
     },
 
     Topup: (id) => {
-        console.log(id)
         return new Promise((resolve, reject) => {
             db.query(`SELECT COUNT(*) as total FROM users_detail where id=${id}`, (error, result, field) => {
                 const { total } = result[0]
-                console.log(total)
                 if (total === 1) {
                     const query = `SELECT user_privat.username, users_detail.email,users_detail.nama, users_detail.topup FROM user_privat JOIN users_detail ON user_privat.id_users_detail=users_detail.id WHERE users_detail.id=${id}`
                     db.query(query, (error, result, field) => {
                         data = result[0]
-                        console.log(result)
+
                         if (error) {
                             resolve({ data, success: false, message: 'tidak berhasil' })
                         }
                         else {
 
-                            console.log(result)
+
                             resolve({ data, success: true, message: 'berhasil' })
 
                         }
@@ -252,7 +241,7 @@ module.exports = {
             else {
                 db.query(`SELECT COUNT(*) as total FROM items where id = ${idItems}`, (error, result, field) => {
                     const { total } = result[0]
-                    console.log(result)
+
                     if (total != 1) {
                         resolve({ success: false, message: 'Id items Not Found' })
                     } else {
@@ -271,11 +260,12 @@ module.exports = {
                                     } else {
 
 
-                                        resolve({ success: true, message: 'Berhasil', items: nameItems, harga: totalItems })
+                                        resolve({ success: true, message: 'Berhasil ditambahkan ke Cart', items: nameItems, harga: totalItems })
                                     }
                                 })
                             }
                         })
+
                     }
 
                 })
@@ -332,6 +322,10 @@ module.exports = {
     ProcessCheckOut: (idCart) => {
         return new Promise((resolve, reject) => {
             db.query(`SELECT * FROM carts where id = ${idCart}`, (error, result) => {
+                const buyQuantity = result[0].buy_quantity
+                const harga = result[0].result
+                const idUsers = result[0].id_users_detail
+                const idItems = result[0].id_items
                 if (error) {
                     resolve({ success: false, message: 'query error' })
                 } else {
@@ -340,8 +334,11 @@ module.exports = {
                     }
                     else {
                         db.query(`SELECT * FROM items where id = ${idItems}`, (error, result) => {
-                            const totalPrice = priceItems * quantity
-                            if (quantityItems < quantity) {
+                            const idItems = result[0].id
+                            // const priceItems = result[0].price
+                            const quantity = result[0].quantity
+
+                            if (buyQuantity > quantity) {
                                 resolve({ success: false, message: 'Barangnnya Kurang' })
                             } else {
                                 db.query(`SELECT * FROM users_detail where id = ${idUsers}`, (error, result, field) => {
@@ -349,12 +346,12 @@ module.exports = {
                                         resolve({ success: false, message: 'Query False' })
                                     } else {
                                         const topup = result[0].topup
-                                        if (totalPrice > topup) {
+
+                                        if (harga > topup) {
                                             resolve({ success: false, message: 'Saldo Kurang' })
                                         } else {
-                                            const sisaTransaksi = topup - totalPrice
-
-                                            const sisaBarang = quantityItems - quantity
+                                            const sisaTransaksi = topup - harga
+                                            const sisaBarang = quantity - buyQuantity
                                             db.query(` UPDATE users_detail set topup = ${sisaTransaksi} where id = ${idUsers}`, (error, result) => {
                                                 if (error) {
                                                     resolve({ success: false, message: 'query falsee' })

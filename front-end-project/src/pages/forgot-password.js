@@ -51,7 +51,7 @@ class ForgotPassword extends Component {
         }
         console.log(data)
         console.log(this.state.code)
-        await Axios.post(`http://localhost:3333/forgot-password`, data)
+        await Axios.post(`${process.env.REACT_APP_API_URL}/forgot-password`, data)
             .then(res => {
                 if (res.data.success === false) {
                     alert(res.data.message)

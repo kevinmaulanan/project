@@ -13,15 +13,20 @@ export default class EditRestaurant extends Component {
             AllRestaurant: [
 
             ],
-            modal: false,
+            modalAdd: false,
+            modalUpdate: false,
+            modalDelete: false,
+
+
             restaurant: '',
             description: '',
             id_admin: 1,
             images: null,
-            id: this
+            idItems: this
         }
-        this.toogle = this.toogle.bind(this)
-        this.handleSubmitAddRestaurant = this.handleSubmitAddRestaurant.bind(this)
+        this.toogleAdd = this.toogleAdd.bind(this)
+        this.toogleUpdate = this.toogleUpdate.bind(this)
+
     }
 
     componentDidMount() {
@@ -30,8 +35,17 @@ export default class EditRestaurant extends Component {
     }
 
 
-    toogle() {
-        this.setState({ modal: !this.state.modal })
+    toogleAdd() {
+        this.setState({ modalAdd: !this.state.modalAdd })
+    }
+
+    toogleDelete() {
+        this.setState({ modalDelete: !this.state.modalDelete })
+    }
+
+    toogleUpdate(id) {
+        console.log(id)
+        this.setState({ modalUpdate: !this.state.modalUpdate, idItems: id })
     }
 
 
@@ -55,10 +69,32 @@ export default class EditRestaurant extends Component {
     }
 
     async handleDeleteRestaurant(id) {
-        console.log(id)
-        let data = await Axios.delete(`http://localhost:3333/restaurant/${id}`, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
+        let data = await Axios.delete(`${process.env.REACT_APP_API_URL}/restaurant/${id}`, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
+        alert(data.data.msg)
+        this.setState({ modalDelete: !this.state.modalDelete })
         this.getRestaurant()
+    }
+
+    async handleUpdateRestaurant(id) {
+        console.log(this.state.idItems)
+        var formData = new FormData()
+        formData.append('restaurant', this.state.restaurant)
+        formData.append('description', this.state.description)
+        formData.append('id_admin', this.state.id_admin)
+        formData.append('images', this.state.images)
+        let data = Axios.patch(`${process.env.REACT_APP_API_URL}/restaurant/${id}`, formData, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
+            .then(res => {
+                console.log(res)
+                console.log(res.data)
+                alert(res.data.msg)
+                this.getRestaurant()
+                this.setState({ modalUpdate: !this.state.modalUpdate })
+            })
+            .catch(error => {
+                console.log(error.response)
+            })
         console.log(data)
+
     }
 
     handleSubmitAddRestaurant(event) {
@@ -68,7 +104,7 @@ export default class EditRestaurant extends Component {
         formData.append('description', this.state.description)
         formData.append('id_admin', this.state.id_admin)
         formData.append('images', this.state.images)
-        Axios.post(`http://localhost:3333/restaurant`, formData, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
+        Axios.post(`${process.env.REACT_APP_API_URL}/restaurant`, formData, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
             .then(res => {
                 console.log(res.data)
                 console.log('woi' + formData)
@@ -77,7 +113,7 @@ export default class EditRestaurant extends Component {
                     alert(res.data.message)
                 } else {
                     alert(res.data.msg)
-                    this.setState({ modal: !this.state.modal })
+                    this.setState({ modalAdd: !this.state.modalAdd })
                     this.getRestaurant()
                 }
             })
@@ -88,7 +124,7 @@ export default class EditRestaurant extends Component {
     }
 
     getRestaurant() {
-        Axios.get(`http://localhost:3333/restaurant`, { headers: { Authorization: "Bearer " + window.localStorage.getItem('token') } })
+        Axios.get(`${process.env.REACT_APP_API_URL}/restaurant`, { headers: { Authorization: "Bearer " + window.localStorage.getItem('token') } })
             .then(res => {
                 if (res.data.success === false) {
                     alert(res.data.msg)
@@ -112,12 +148,12 @@ export default class EditRestaurant extends Component {
                 <div className="container">
                     <div className="row">
                         <div className="col">
-                            <Link onClick={this.toogle}>Add Restaurant++</Link>
+                            <Link onClick={this.toogleAdd}>Add Restaurant++</Link>
                         </div>
 
-                        <Modal size="md" className="" isOpen={this.state.modal} toggle={this.toogle} >
+                        <Modal size="md" className="" isOpen={this.state.modalAdd} toggle={this.toogleAdd} >
                             <div className="mr-5 ml-5">
-                                <ModalHeader toggle={this.toogle} >Create Restaurant</ModalHeader>
+                                <ModalHeader toggle={this.toogleAdd} >Create Restaurant</ModalHeader>
                                 <ModalBody>
 
                                     <div class="form-group row">
@@ -149,8 +185,8 @@ export default class EditRestaurant extends Component {
                                     </div>
 
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onClick={this.handleSubmitAddRestaurant} >Add Restaurant</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={() => this.toogleAdd()} >Close</button>
+                                        <button type="button" class="btn btn-primary" onClick={(event) => this.handleSubmitAddRestaurant(event)} >Add Restaurant</button>
                                     </div>
 
 
@@ -207,7 +243,7 @@ export default class EditRestaurant extends Component {
 
 
                                     <div className="col-md-3">
-                                        <img src={`http://localhost:3333${v.image_restaurant}`} style={{ height: "160px", width: "260px" }} className="rounded border border-white"></img>
+                                        <img src={`${process.env.REACT_APP_API_URL}${v.image_restaurant}`} style={{ height: "160px", width: "260px" }} className="rounded border border-white"></img>
                                     </div>
 
                                     <div className="col-md-2">
@@ -226,13 +262,70 @@ export default class EditRestaurant extends Component {
 
 
                                     <div className="col-md-1">
-                                        <FaEdit style={{ height: "30px", width: "30px", marginTop: "45px" }}></FaEdit>
+                                        <Link onClick={() => this.toogleUpdate(v.id)}>  <FaEdit style={{ height: "30px", width: "30px", marginTop: "45px" }}></FaEdit></Link>
+
+                                        <Modal size="md" className="" isOpen={this.state.modalUpdate} toggle={this.toogleUpdate} >
+                                            <div className="mr-5 ml-5">
+                                                <ModalHeader toggle={this.toogleUpdate} >Update Restaurant</ModalHeader>
+                                                <ModalBody>
+
+                                                    <div class="form-group row">
+                                                        <label for="" class="col-sm-3 col-form-label">Restaurant</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="text" class="form-control" placeholder="Restaurant" onChange={(event) => { this.handleRestaurant(event) }}></input>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group row">
+                                                        <label for="" class="col-sm-3 col-form-label">Desciption</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="text" class="form-control" placeholder="Description" onChange={(event) => { this.handleDescription(event) }}></input>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group row">
+                                                        <label for="" class="col-sm-3 col-form-label">Id Admin</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="text" class="form-control" value="1" onChange={(event) => { this.handleIdAdmin(event) }}></input>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group row">
+                                                        <label for="exampleFormControlFile1" class=" col-sm-3 col-form-label">Image Restaurant</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="file" class="form-control-file" id="exampleFormControlFile1" onChange={(event) => { this.handleImageRestaurant(event) }}></input>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={() => this.toogleUpdate()}>Close</button>
+                                                        <button type="button" class="btn btn-primary" onClick={() => this.handleUpdateRestaurant(this.state.idItems)} >Update Restaurant</button>
+                                                    </div>
+
+
+                                                </ModalBody>
+                                            </div>
+                                        </Modal>
+
                                     </div>
 
 
                                     <div className="col-md-1">
-                                        <Link onClick={() => this.handleDeleteRestaurant(v.id)}>
+                                        <Link onClick={() => this.toogleDelete()}>
                                             <FaTrash className="fas" style={{ height: "30px", width: "30px", color: "red", marginTop: "45px" }} ></FaTrash></Link>
+                                        <Modal size="md" className="" isOpen={this.state.modalDelete} toggle={() => this.toogleDelete()} >
+                                            <div className="mr-5 ml-5">
+                                                <ModalHeader toggle={() => this.toogleDelete()} >Delete Restaurant</ModalHeader>
+                                                <ModalBody>
+                                                    <h3>Yakin Delete Restaurant?</h3>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={() => this.toogleDelete()}>Batal</button>
+
+                                                        <button type="button" class="btn btn-primary" onClick={() => this.handleDeleteRestaurant(v.id)} >Delete Restaurant</button>
+                                                    </div>
+                                                </ModalBody>
+                                            </div>
+                                        </Modal>
 
                                     </div>
 

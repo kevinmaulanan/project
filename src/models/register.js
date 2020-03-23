@@ -20,7 +20,7 @@ module.exports = {
                               if (!error) {
                                    const { total } = results[0]
                                    if (total !== 0) {
-                                        resolve({ success: false, message: 'Username already used. Please fill in the email again' })
+                                        resolve({ success: false, message: 'Username already used. Please fill in the Username again' })
                                    } else {
                                         {
                                              db.query(`SELECT COUNT(*) as total FROM users_detail WHERE email = '${email}' LIMIT 1`,

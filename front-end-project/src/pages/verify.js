@@ -19,15 +19,12 @@ class Login extends Component {
     }
 
     postRegister() {
-        console.log('lala')
-        Axios.POST("http://localhost:3333/register")
+        Axios.POST(`${process.env.REACT_APP_API_URL}/register`)
             .then(res => {
                 if (res.data.success === false) {
-                    console.log('hsh')
                     alert(res.data.message)
                 }
                 else {
-                    console.log('hihi')
                     let dataArr = res.data.result
                     this.setState({ data_restaurant: dataArr })
                 }

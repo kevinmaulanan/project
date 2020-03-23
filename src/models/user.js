@@ -91,6 +91,7 @@ module.exports = {
           } else {
             db.query(`DELETE user_privat, users_detail FROM user_privat JOIN users_detail ON user_privat.id_users_detail = users_detail.id WHERE user_privat.id =${id}`, (error, result, field) => {
               if (error) {
+                console.log(error)
                 resolve({ success: false, message: 'failed to delete failed due to an error in the query' })
               } else {
                 resolve({ success: true, message: 'User has been deleted' })
@@ -101,6 +102,40 @@ module.exports = {
       })
     })
   },
+
+  update: (id, classUser) => {
+    console.log(id)
+    console.log(classUser)
+    return new Promise((resolve, reject) => {
+      if (classUser === null) {
+        resolve({ success: false, message: 'ClassUser tidak boleh kosong' })
+      }
+      else {
+        db.query(`SELECT COUNT(*) as total from user_privat where id=${id}`, (error, result) => {
+          const { total } = result[0]
+          if (error) {
+            resolve({ success: false, message: 'Query False' })
+          }
+          else if (total < 1 || total > 1)
+            resolve({ success: false, message: 'ID tidak ditemukan' })
+
+          else {
+            db.query(`UPDATE user_privat SET id_user_class=${classUser} where id=${id}`, (error, result) => {
+              if (error) {
+                console.log(error)
+                resolve({ success: false, message: 'Query False' })
+              } else {
+                resolve({ success: true, message: 'User dengan ID: ' + id + ' Sudah TerUpdate' })
+              }
+
+            })
+
+          }
+
+        })
+      }
+    })
+  }
 
 }
 

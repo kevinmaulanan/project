@@ -32,7 +32,7 @@ export default class DetailRestaurant extends Component {
 
 
     getDataRestaurant(id) {
-        Axios.get(`http://localhost:3333/browse_restaurant/${id}`)
+        Axios.get(`${process.env.REACT_APP_API_URL}/browse_restaurant/${id}`)
             .then(res => {
                 let dataRestaurant = res.data.data
 
@@ -41,7 +41,7 @@ export default class DetailRestaurant extends Component {
     }
 
     getItemsById(id) {
-        Axios.get(`http://localhost:3333/browse_items/restaurant/${id}`)
+        Axios.get(`${process.env.REACT_APP_API_URL}/browse_items/restaurant/${id}`)
             .then(res => {
                 console.log('disini')
                 let dataItems = res.data.data
@@ -61,7 +61,7 @@ export default class DetailRestaurant extends Component {
                             <Row >
                                 <Col >
                                     <div className="d-flex justify-content-center" >
-                                        <CardImg src={`http://localhost:3333${this.state.restaurant.image_restaurant}`} alt='Restaurant' style={{ height: "700px", width: "1400px" }} />
+                                        <CardImg src={`${process.env.REACT_APP_API_URL}${this.state.restaurant.image_restaurant}`} alt='Restaurant' style={{ height: "700px", width: "1400px" }} />
 
                                     </div>
 
@@ -104,7 +104,7 @@ export default class DetailRestaurant extends Component {
                                     <Col sm={3} className="mb-5">
                                         <div className="card">
                                             <Link to={`/Items/${v.id}`}>
-                                                <CardImg src={`http://localhost:3333${v.image_items}`} style={{ height: "190px", overflow: "hidden" }} alt='Items' />
+                                                <CardImg src={`${process.env.REACT_APP_API_URL}${v.image_items}`} style={{ height: "190px", overflow: "hidden" }} alt='Items' />
 
                                             </Link>
                                             <CardTitle className=" ml-2 mt-2"> <small className=" text-success"> {v.restaurant}</small></CardTitle>

@@ -27,10 +27,10 @@ const uploadMulter = multer({
 
 const uploads = (req, res, namaFile) => {
     return new Promise((resolve, reject) => {
-        uploadMulter.single(namaFile)(req, res, err => {
-            if (err) {
-                console.log(err)
-                resolve({ success: false, message: 'disini' })
+        uploadMulter.single(namaFile)(req, res, error => {
+            if (error) {
+                console.log(error)
+                reject(new Error(error))
             }
             return resolve({ success: true, message: 'berhasil yoi' })
         })

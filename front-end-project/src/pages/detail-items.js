@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Col, Modal, ModalBody, ModalHeader } from 'reactstrap'
+import { Col, Modal, ModalBody, ModalHeader, Button, Collapse, Card, CardBody } from 'reactstrap'
 
 import Axios from 'axios'
 import ItemsCostume from '../Looping/items'
@@ -13,11 +13,15 @@ export default class DetailItems extends Component {
             all_items: [
 
             ],
+            all_reviews: [],
             modalAddCart: false,
+            modalComment: false,
             QuantityCart: null,
+            totalReview: 0,
             cartAdd: [
 
             ],
+            comment: '',
 
             id_params: this.props.match.params.id
         }
@@ -30,9 +34,14 @@ export default class DetailItems extends Component {
         this.setState({ modalAddCart: !this.state.modalAddCart })
     }
 
+    toogleComment() {
+        this.setState({ modalComment: !this.state.modalComment })
+    }
+
     async componentDidMount() {
         this.getItemsById(this.props.match.params.id)
         this.getDataItems()
+        this.getReviews()
     }
 
 
@@ -47,6 +56,33 @@ export default class DetailItems extends Component {
         this.setState({ QuantityCart: event.target.value })
     }
 
+    handleReviews(event) {
+        this.setState({ comment: event.target.value })
+    }
+
+    async handleSubmitAddReviews() {
+        const data = {
+            comment: this.state.comment,
+            id_items: this.props.match.params.id
+        }
+        console.log(data)
+        try {
+            let res = await Axios.post(`${process.env.REACT_APP_API_URL}/review`, data, { headers: { Authorization: "Bearer " + window.localStorage.getItem('token') } })
+
+            if (res.data.success === false) {
+                alert(res.data.message)
+            } else {
+                alert(res.data.message)
+                this.getReviews()
+
+            }
+        } catch (error) {
+            console.log(error.response)
+            // this.props.history.push('/login')
+        }
+    }
+
+
 
     async handleSubmitAddCart() {
         const data = {
@@ -54,22 +90,27 @@ export default class DetailItems extends Component {
         }
         try {
 
-            let res = await Axios.post(`http://localhost:3333/carts/${this.state.id_params}`, data, { headers: { Authorization: "Bearer " + window.localStorage.getItem('token') } })
-
+            let res = await Axios.post(`${process.env.REACT_APP_API_URL}/carts/${this.state.id_params}`, data, { headers: { Authorization: "Bearer " + window.localStorage.getItem('token') } })
+            console.log('ayo')
             if (res.data.success === false) {
-                alert(res.data.message)
+                console.log(res)
+                alert(res.data.msg)
             } else {
-                console.log(res.data)
                 this.setState({ modalAddCart: !this.state.modalAddCart })
-                alert(res.data.success)
+                console.log(res)
+                console.log(res.data.message)
+                alert(res.data.message)
+
             }
         } catch (error) {
-            console.log(error)
+            console.log(error.response)
+            // alert(error.response.data.data.message)
+            this.props.history.push('/login')
         }
     }
 
     getItemsById(id) {
-        Axios.get(`http://localhost:3333/browse_items/items/${id}`)
+        Axios.get(`${process.env.REACT_APP_API_URL}/browse_items/items/${id}`)
             .then(res => {
                 let dataItems = res.data.data
                 this.setState({ items: dataItems })
@@ -78,14 +119,25 @@ export default class DetailItems extends Component {
 
 
     getDataItems() {
-        Axios.get("http://localhost:3333/browse_items?sort[name]=1")
+        Axios.get(`${process.env.REACT_APP_API_URL}/browse_items?sort[name]=1`)
             .then(res => {
                 let dataAllItems = res.data.result
                 this.setState({ all_items: dataAllItems })
             })
     }
 
-
+    getReviews() {
+        Axios.get(`${process.env.REACT_APP_API_URL}/review/${this.props.match.params.id}`, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
+            .then(res => {
+                console.log(res)
+                console.log(res.data.data.length)
+                this.setState({ all_reviews: res.data.data, totalReview: res.data.data.length })
+            })
+            .catch(error => {
+                console.log(error.response)
+                this.props.history.push('/login')
+            })
+    }
 
 
 
@@ -111,7 +163,7 @@ export default class DetailItems extends Component {
                         <div className="row ml-2 mr-2 mt-4">
 
                             <Col sm={7} className="mb-3">
-                                <img src={`http://localhost:3333${this.state.items.image_items}`} style={{ height: "350px", width: "580px", overflow: "hidden" }} alt='Items' />
+                                <img src={`${process.env.REACT_APP_API_URL}${this.state.items.image_items}`} style={{ height: "350px", width: "580px", overflow: "hidden" }} alt='Items' />
                             </Col>
                             <Col sm={5}>
                                 <div className="ml-2 mt-3">
@@ -141,9 +193,60 @@ export default class DetailItems extends Component {
                                     </div>
                                 </div>
                             </Col >
-
-
                         </div>
+
+                        <div>
+
+
+                            <div className="ml-4">
+
+                                <Button color="primary" onClick={() => this.toogleComment()} style={{ marginBottom: '1rem' }}>
+                                    Lihat Komentar
+                                    <span class="badge badge-light ml-1"> {this.state.totalReview}</span></Button>
+
+                                <Collapse isOpen={this.state.modalComment}>
+                                    {this.state.all_reviews.map((v) =>
+                                        <div class="row">
+                                            <div class="col-6 mt-2 mb-2">
+                                                <div className="ml-2">
+                                                    <div class="card">
+                                                        <div class="card card-white post border-0" style={{ paddingLeft: "15px", paddingTop: "15px" }}>
+                                                            <div class="post-heading ">
+                                                                <div class="float-left image">
+                                                                    <img src={`${process.env.REACT_APP_API_URL}${v.image}`} class="rounded-circle" style={{ height: "90px", width: "90px" }} alt="image"></img>
+                                                                </div>
+                                                                <div class="float-left meta">
+                                                                    <div class="title h5 ml-2">
+                                                                        <a href><b>{v.nama}</b></a>
+                                                                    </div>
+                                                                    <h6 class="text-muted time"></h6>
+                                                                </div>
+                                                            </div>
+                                                            <div style={{ marginTop: "20px" }}>
+                                                                <p>{v.comment}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div class="row">
+                                        <div class="col-5 mt-2 mb-2">
+                                            <div className="ml-2">
+                                                <textarea onChange={(event) => this.handleReviews(event)} class="form-control rounded-0" id="exampleFormControlTextarea2" placeholder="Masukkan Komentar" ></textarea>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-1 mt-2 mb-2">
+                                            <button onClick={() => this.handleSubmitAddReviews()} type="submit" class="text-center">Kirim</button>
+                                        </div>
+                                    </div>
+
+                                </Collapse>
+                            </div>
+                        </div>
+
 
 
                         < div className="row about text-center" style={{ marginTop: "110px" }}>
@@ -180,7 +283,8 @@ export default class DetailItems extends Component {
 
 
                     </div>
-                )}
+                )
+                }
 
             </>
 

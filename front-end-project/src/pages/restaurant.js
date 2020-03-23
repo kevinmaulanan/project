@@ -1,38 +1,26 @@
 import React, { Component } from 'react'
-import AboutCostume from '../Component/about'
 import DataRestaurant from '../Looping/restaurant'
-import CostumeNavBar from '../Component/navbar'
 import { Container } from 'reactstrap'
 
 import Axios from 'axios'
-import jwt from 'jsonwebtoken'
+import { connect } from 'react-redux'
+import { getDataRestaurant } from '../redux/actions/restaurant'
 
 
 
 class Restaurant extends Component {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            data_restaurant: []
-        }
-    }
-
     componentDidMount() {
-        this.getDataRestaurant()
+
+        this.props.getDataRestaurant()
     }
 
-    getDataRestaurant() {
-        Axios.get("http://localhost:3333/browse_restaurant")
-            .then(res => {
-                let DataResto = res.data.result
-                this.setState({ data_restaurant: DataResto })
-            })
-    }
+
 
     render() {
         return (
             <div>
+                {console.log(this.props.dataRestaurant)}
                 <section className="about">
                     <div className="container text-center">
                         < div className="row ">
@@ -44,7 +32,7 @@ class Restaurant extends Component {
                         </div>
                         <Container>
                             <div className="row">
-                                {this.state.data_restaurant.map((val, index) => (
+                                {this.props.dataRestaurant.map((val, index) => (
                                     <DataRestaurant
                                         id={val.id}
                                         restaurant={val.restaurant}
@@ -52,7 +40,7 @@ class Restaurant extends Component {
                                         description={val.description}
                                         created_at={val.created_at}
                                     />
-                                ))}
+                                ))} */}
                             </div>
                         </Container>
                         <section className="">
@@ -66,5 +54,16 @@ class Restaurant extends Component {
     }
 }
 
+const mapStateToProps = state => ({
+    dataRestaurant: state.restaurant.dataRestaurant
+})
 
-export default Restaurant
+
+
+const mapDispatchToProps = { getDataRestaurant }
+
+// console.log(mapStateToProps(state))
+console.log(mapDispatchToProps)
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Restaurant)

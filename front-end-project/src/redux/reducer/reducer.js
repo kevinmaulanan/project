@@ -1,18 +1,20 @@
-// const globalState = {
-//     dataRestaurant: [
+import { GET_ALL_RESTAURANTS } from '../actions/type'
+const globalState = {
+    dataRestaurant: [
 
-//     ]
-// }
+    ]
+}
 
-// const restaurant = (state = globalState, action) => {
-//     if (action.type === 'restaurant') {
-//         return {
-//             ...state,
-//             dataRestaurant= action.playload
-//         }
-//     } else {
-//         return state;
-//     }
-// }
+export default function restaurantReducer(state = globalState, action) {
+    console.log('actionReducers', action.payload)
+    switch (action.type) {
+        case GET_ALL_RESTAURANTS:
+            return {
+                ...state,
+                dataRestaurant: action.payload
+            }
 
-// export default restaurant
+        default:
+            return state
+    }
+}

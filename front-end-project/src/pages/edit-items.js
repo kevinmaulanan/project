@@ -20,6 +20,7 @@ export default class EditItems extends Component {
             category_detail: [
 
             ],
+            pagePagination: [],
             images: null,
             name: '',
             quantity: null,
@@ -27,6 +28,7 @@ export default class EditItems extends Component {
             id_category_detail: null,
             id_restaurant: null,
             idUpdate: null,
+            pageActive: 1,
         }
         this.toogleAdd = this.toogleAdd.bind(this)
         this.toogleUpdate = this.toogleUpdate.bind(this)
@@ -35,6 +37,16 @@ export default class EditItems extends Component {
 
     }
 
+    page(i) {
+        console.log(i)
+        this.setState({ pageActive: i + 1 })
+        this.getItems()
+    }
+
+    kurangPage() {
+        this.setState({ pageActive: this.state.pageActive - 1 })
+        this.getItems()
+    }
 
 
     toogleAdd() {
@@ -100,7 +112,7 @@ export default class EditItems extends Component {
     }
 
     async handleSubmitDeleteItems(id) {
-        const data = await Axios.delete(`http://localhost:3333/items`)
+        const data = await Axios.delete(`${process.env.REACT_APP_API_URL}/items`)
     }
 
     async handleSubmitAddItems(event) {
@@ -115,7 +127,7 @@ export default class EditItems extends Component {
         formData.append('images', this.state.images)
         console.log(this.state)
         console.log(formData)
-        const data = await Axios.post(`http://localhost:3333/items`, formData, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
+        const data = await Axios.post(`${process.env.REACT_APP_API_URL}/items`, formData, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
         console.log(data)
         alert(data.data.message)
         this.setState({ modalAdd: !this.state.modalAdd })
@@ -130,10 +142,8 @@ export default class EditItems extends Component {
         formData.append('id_category_detail', this.state.id_category_detail)
         formData.append('id_restaurant', this.state.id_restaurant)
         formData.append('images', this.state.images)
-        console.log(this.state)
-        console.log(formData)
-        console.log(id)
-        const data = await Axios.patch(`http://localhost:3333/items/${id}`, formData, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
+
+        const data = await Axios.patch(`${process.env.REACT_APP_API_URL}/items/${id}`, formData, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
             .then(res => {
                 console.log(res)
                 this.setState({ modalUpdate: !this.state.modalUpdate })
@@ -147,14 +157,14 @@ export default class EditItems extends Component {
 
 
     getRestaurant() {
-        Axios.get(`http://localhost:3333/browse_restaurant`)
+        Axios.get(`${process.env.REACT_APP_API_URL}/browse_restaurant`)
             .then(res => {
                 this.setState({ restaurant: res.data.result })
             })
     }
 
     getCategoryDetail() {
-        Axios.get(`http://localhost:3333/browse_category`)
+        Axios.get(`${process.env.REACT_APP_API_URL}/browse_category`)
             .then(res => {
                 this.setState({ category_detail: res.data.result })
             })
@@ -164,20 +174,37 @@ export default class EditItems extends Component {
 
 
     getItems() {
-        Axios.get(`http://localhost:3333/items`, { headers: { Authorization: "Bearer " + window.localStorage.getItem('token') } })
+        Axios.get(`${process.env.REACT_APP_API_URL}/items?page=${this.state.pageActive}`, { headers: { Authorization: "Bearer " + window.localStorage.getItem('token') } })
             .then(res => {
                 if (res.data.success === false) {
                     alert(res.data.msg)
                     this.props.history.push('/home')
                 } else {
-                    console.log(res.data.result)
-                    this.setState({ Items: res.data.result })
+                    console.log(res.data)
+                    this.setState({ Items: res.data.result, pagePagination: res.data.pagination })
                 }
             })
             .catch(error => {
                 console.log(error.response)
                 alert(error.response.data.message)
                 this.props.history.push('/login')
+            })
+    }
+
+    async deleteItems(idItems) {
+        const data = {
+            id: idItems
+        }
+        console.log(data)
+
+        const deleteData = await Axios.delete(`${process.env.REACT_APP_API_URL}/items`, { data, headers: { Authorization: 'Bearer ' + window.localStorage.getItem('token') } })
+            .then(res => {
+                alert(res.data.message)
+                this.getItems()
+            })
+            .catch(error => {
+                console.log(error.response)
+                alert(error.response.message)
             })
     }
 
@@ -208,7 +235,7 @@ export default class EditItems extends Component {
                                     <div class="form-group row">
                                         <label class="col-sm-3 col-form-label">Quantity</label>
                                         <div className="col-sm-9">
-                                            <input min="0" type="number" class="form-control"
+                                            <input min="0" type="number" class="form-control" placeholder="Quantity"
                                                 onChange={(event) => { this.handleQuantity(event) }}
                                             ></input>
                                         </div>
@@ -217,7 +244,7 @@ export default class EditItems extends Component {
                                     <div class="form-group row">
                                         <label class="col-sm-3 col-form-label">Price</label>
                                         <div className="col-sm-9">
-                                            <input min="0" type="number" class="form-control"
+                                            <input min="0" type="number" class="form-control" placeholder="Price"
                                                 onChange={(event) => { this.handlePrice(event) }}
                                             ></input>
                                         </div>
@@ -303,7 +330,7 @@ export default class EditItems extends Component {
                                         <h4 className="text-secondary" style={{ marginTop: "45px" }}>{v.id} </h4>
                                     </div>
                                     <div className="col-md-2">
-                                        <img src={`http://localhost:3333${v.image_items}`} style={{ height: "130px", width: "130px" }} className="rounded-circle border border-white"></img>
+                                        <img src={`${process.env.REACT_APP_API_URL}${v.image_items}`} style={{ height: "130px", width: "130px" }} className="rounded-circle border border-white"></img>
                                     </div>
                                     <div className="col-md-2">
                                         <h5 style={{ marginTop: "45px" }}> {v.name} </h5>
@@ -399,10 +426,37 @@ export default class EditItems extends Component {
 
 
                                     <div className="col-md-1">
-                                        <FaTrash className="fas" style={{ height: "30px", width: "30px", color: "red", marginTop: "45px" }}></FaTrash>
+                                        <Link onClick={() => this.deleteItems(v.id)}>   <FaTrash className="fas" style={{ height: "30px", width: "30px", color: "red", marginTop: "45px" }}></FaTrash></Link>
                                     </div>
                                 </div>
                             ))}
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination" >
+                                    <li class="page-item"  >
+                                        <button onClick={() => this.kurangPage()} class="page-link" aria-label="Previous" >
+                                            <span aria-hidden="true">&laquo;</span>
+                                            <span class="sr-only">Previous</span>
+                                        </button>
+                                    </li>
+
+                                    {this.state.Items &&
+                                        [...Array(this.state.pagePagination.totalPages)].map((v, i) => (
+                                            < li onClick={(event) => this.page(i)} class={`page-item ${i + 1 == this.state.pageActive ? "active" : ''}`}><a class="page-link" >{i + 1}</a></li>
+                                        ))
+                                    }
+
+
+                                    <li class="page-item">
+                                        <button onClick={() => this.tambahPage()}
+                                            class="page-link" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                            <span class="sr-only">Next</span>
+                                        </button>
+                                    </li>
+
+
+                                </ul>
+                            </nav>
                         </div>
 
                     </div>

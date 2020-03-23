@@ -16,7 +16,7 @@ const CreateUser = async (req, res) => {
     if (create) {
       res.send({ success: true, msg: 'User has been created!' })
     } else {
-      res.send({ success: false, msg: mesasage })
+      res.send({ success: false, msg: message })
     }
   } catch (error) {
     res.send({ success: false, msg: error })
@@ -127,12 +127,33 @@ const getAllUser = async (req, res) => {
   }
 }
 
+const updateUser = async (req, res) => {
+  const { id } = req.params
+  const { classUser } = req.body
+  const { message, success } = await user.update(id, classUser)
+  try {
+    if (success) {
+      res.send({
+        success: true,
+        message
+      })
+    } else {
+      res.send({
+        success: false,
+        message
+      })
+    }
+  } catch (error) {
+    res.send({
+      success: false,
+      message
+    })
+  }
+}
+
 const deleteUser = async (req, res) => {
   const { id } = req.params
   const { message, success } = await user.delete(id)
-  console.log(message)
-  console.log(success)
-  console.log(id)
   try {
     if (success) {
       res.send({
@@ -158,5 +179,6 @@ module.exports = {
   updateUserPassword,
   getUser,
   getAllUser,
-  deleteUser
+  deleteUser,
+  updateUser
 }

@@ -14,22 +14,86 @@ export default class EditUser extends Component {
             get_all_users: [
 
             ],
-            id: this,
-            modalAdd: false
+            name: null,
+            username: null,
+            password: null,
+            email: null,
+            userClass: null,
+            modalAdd: false,
+            modalDelete: false,
+            modalUpdate: false,
+            idUpdate: null
         }
     }
 
 
-    toogleAdd() {
-        this.setState({ modalAdd: !this.state.modalAdd })
-    }
 
     componentDidMount() {
         this.getAllUser()
     }
 
+    toogleAdd() {
+        this.setState({ modalAdd: !this.state.modalAdd })
+    }
+
+    toogleDelete() {
+        this.setState({ modalDelete: !this.state.modalDelete })
+    }
+
+    toogleUpdate(id) {
+        this.setState({ modalUpdate: !this.state.modalUpdate, idUpdate: id })
+
+    }
+
+    handleName(event) {
+        this.setState({ name: event.target.value })
+    }
+
+    handleUsername(event) {
+        this.setState({ username: event.target.value })
+    }
+
+    handlePassword(event) {
+        this.setState({ password: event.target.value })
+    }
+
+    handleEmail(event) {
+        this.setState({ Email: event.target.value })
+    }
+
+    hadleUserClass(event) {
+        this.setState({ userClass: event.target.value })
+        console.log(event.target.value)
+    }
+
+    async handleAddUser() {
+        const data = {
+            name: this.state.name,
+            username: this.state.username,
+            password: this.state.password,
+            email: this.state.email
+        }
+        console.log(data)
+        const AddUser = await Axios.post(`${process.env.REACT_APP_API_URL}/register`, data)
+            .then(res => {
+                if (res.data.success === false) {
+                    alert(res.data.message)
+                } else {
+                    console.log(res.data)
+                    alert(res.data.msg)
+                    this.getAllUser()
+                    this.setState({ modalAdd: !this.state.modalAdd })
+                }
+            })
+            .catch(error => {
+                console.log(error.response)
+            })
+        console.log(AddUser)
+    }
+
+
     getAllUser() {
-        Axios.get(`http://localhost:3333/user`, { headers: { Authorization: "Bearer " + window.localStorage.getItem('token') } })
+        Axios.get(`${process.env.REACT_APP_API_URL}/user`, { headers: { Authorization: "Bearer " + window.localStorage.getItem('token') } })
             .then(res => {
                 if (res.data.success === false) {
                     alert(res.data.msg)
@@ -48,10 +112,11 @@ export default class EditUser extends Component {
 
     async handleDeleteUser(id) {
         console.log(id)
-        let data = await Axios.delete(`http://localhost:3333/user/${id}`, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
+        let data = await Axios.delete(`${process.env.REACT_APP_API_URL}/user/${id}`, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
         console.log(data)
         alert(data.data.message)
         this.getAllUser()
+        this.setState({ modalDelete: !this.state.modalDelete })
     }
 
     async handleUpdateUser(id) {
@@ -64,21 +129,35 @@ export default class EditUser extends Component {
         formData.append('weight', this.state.weight)
         formData.append('images', this.state.images)
         console.log(this.state)
-        const data = await Axios.post(`http://localhost:3333/profile`, formData, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
+        const data = await Axios.post(`${process.env.REACT_APP_API_URL}/profile`, formData, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
+        console.log(data)
+    }
+
+    async handleUpdateUser() {
+        const classUser = {
+            classUser: parseInt(this.state.userClass)
+        }
+        console.log(classUser)
+
+        const data = await Axios.patch(`${process.env.REACT_APP_API_URL}/user/${this.state.idUpdate}`, classUser, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
+            .then(res => {
+                console.log(res.data)
+                this.setState({ modalUpdate: !this.state.modalUpdate })
+                alert(res.data.message)
+                this.getAllUser()
+            })
+            .catch(error => {
+                console.log(error.response)
+            })
         console.log(data)
     }
 
     // handleSubmitAddUser(event) {
     //     event.preventDefault()
     //     var formData = new FormData()
-    //     formData.append('name', this.state.name)
-    //     formData.append('quantity', this.state.quantity)
-    //     formData.append('price', this.state.price)
-    //     formData.append('id_category_detail', this.state.id_category_detail)
-    //     formData.append('id_restaurant', this.state.id_restaurant)
-    //     formData.append('images', this.state.images)
+    //    
     //     console.log(this.state)
-    //     Axios.post(`http://localhost:3333/items`, formData, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
+    //     Axios.post(`${process.env.REACT_APP_API_URL}/items`, formData, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
     //         .then(res => {
     //             console.log(res)
     //             console.log(formData)
@@ -95,16 +174,7 @@ export default class EditUser extends Component {
     //         })
     // }
 
-    // submitDeleteUser(id) {
-    //     Axios.delete(`http://localhost:3333/user/${id}`)
-    //         .then(res => {
-    //             console.log(res)
-    //             alert(res.data.message)
-    //         })
-    //         .catch(error => {
-    //             console.log(error.response)
-    //         })
-    // }
+
 
 
     render() {
@@ -114,58 +184,53 @@ export default class EditUser extends Component {
                 <div className="container">
                     <div className="row">
                         <div className="col">
-                            <Link onClick={this.toogleAdd}>Add Items++</Link>
+                            <Link onClick={() => this.toogleAdd()}>Add User++</Link>
                         </div>
 
-                        <Modal size="md" className="" isOpen={this.state.modalAdd} toggle={this.toogleAdd} >
+                        <Modal size="md" className="" isOpen={this.state.modalAdd} toggle={() => this.toogleAdd()} >
                             <div className="mr-5 ml-5">
-                                <ModalHeader toggle={this.toogleAdd} >Create Items</ModalHeader>
+                                <ModalHeader toggle={() => this.toogleAdd()} >Create User</ModalHeader>
                                 <ModalBody>
 
                                     <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label">Items</label>
+                                        <label class="col-sm-3 col-form-label">Name</label>
                                         <div class="col-sm-9">
-                                            <input type="text" class="form-control" placeholder="Items"
+                                            <input type="text" class="form-control" placeholder="Name....."
                                                 onChange={(event) => { this.handleName(event) }}
                                             ></input>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label">Quantity</label>
-                                        <div className="col-sm-9">
-                                            <input min="0" type="number" class="form-control"
-                                                onChange={(event) => { this.handleQuantity(event) }}
-                                            ></input>
-                                        </div>
-                                    </div>
 
                                     <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label">Price</label>
-                                        <div className="col-sm-9">
-                                            <input min="0" type="number" class="form-control"
-                                                onChange={(event) => { this.handlePrice(event) }}
-                                            ></input>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label">Pilih Category</label>
+                                        <label class="col-sm-3 col-form-label">Username</label>
                                         <div class="col-sm-9">
-                                            <select class="custom-select form-control" onChange={(event) => { this.handleCategory(event) }}>
-                                                <option selected
-                                                >Pilih Category
-                                                 </option>
-                                                {this.state.category_detail.map((v) =>
-                                                    <option value={v.id} > {v.category_detail}</option>
-                                                )}
-                                            </select>
+                                            <input type="text" class="form-control" placeholder="Username....."
+                                                onChange={(event) => { this.handleUsername(event) }}
+                                            ></input>
                                         </div>
-
                                     </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">Password</label>
+                                        <div className="col-sm-9">
+                                            <input type="password" class="form-control" placeholder="Password....."
+                                                onChange={(event) => { this.handlePassword(event) }}
+                                            ></input>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">Email</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" placeholder="Email....."
+                                                onChange={(event) => { this.handleEmail(event) }}
+                                            ></input>
+                                        </div>
+                                    </div>
+
 
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onClick={this.handleSubmitAddItems} >Add Items</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={() => this.toogleAdd()}>Close</button>
+                                        <button type="button" class="btn btn-primary" onClick={() => this.handleAddUser()} >Add User</button>
                                     </div>
 
                                 </ModalBody>
@@ -220,7 +285,7 @@ export default class EditUser extends Component {
 
 
                                     <div className="col-md-2">
-                                        <img src={`http://localhost:3333${v.image}`} style={{ height: "120px", width: "120px" }} className="rounded-circle border border-white"></img>
+                                        <img src={`${process.env.REACT_APP_API_URL}${v.image}`} style={{ height: "120px", width: "120px" }} className="rounded-circle border border-white"></img>
                                     </div>
 
                                     <div className="col-md-2">
@@ -239,15 +304,53 @@ export default class EditUser extends Component {
 
 
                                     <div className="col-md-1">
-                                        <Link onclick={() => this.handleUpdateUser(v.id)}>
+                                        <Link onClick={() => this.toogleUpdate(v.id)}>
                                             <FaEdit style={{ height: "25px", width: "25px", marginTop: "45px" }}></FaEdit>
                                         </Link>
+                                        <Modal size="md" className="" isOpen={this.state.modalUpdate} toggle={() => this.toogleUpdate()} >
+                                            <div className="mr-5 ml-5">
+                                                <ModalHeader toggle={() => this.toogleUpdate()} >Update User</ModalHeader>
+                                                <ModalBody>
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-4 col-form-label">Pilih Class User</label>
+                                                        <div class="col-sm-8">
+                                                            <select class="custom-select form-control" onChange={(event) => { this.hadleUserClass(event) }}>
+                                                                <option selected >Pilih Class User</option>
+                                                                <option value="1">SuperAdmin</option>
+                                                                <option value="2">Admin</option>
+                                                                <option value="3">Costumer</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={() => this.toogleUpdate()}>Close</button>
+                                                        <button type="button" class="btn btn-primary" onClick={() => this.handleUpdateUser(v.id)} >Update User</button>
+                                                    </div>
+
+                                                </ModalBody>
+                                            </div>
+                                        </Modal>
+
                                     </div>
 
 
                                     <div className="col-md-1">
-                                        <Link onClick={() => this.handleDeleteUser(v.id)}>  <FaTrash className="fas" style={{ height: "25px", width: "25px", color: "red", marginTop: "45px" }}></FaTrash>
+                                        <Link onClick={() => this.toogleDelete()}>  <FaTrash className="fas" style={{ height: "25px", width: "25px", color: "red", marginTop: "45px" }}></FaTrash>
                                         </Link>
+
+                                        <Modal size="md" className="" isOpen={this.state.modalDelete} toggle={() => this.toogleDelete()}  >
+                                            <div className="mr-5 ml-5">
+                                                <ModalHeader toggle={() => this.toogleDelete()} >Delete Username</ModalHeader>
+                                                <ModalBody>
+                                                    <h3>Yakin Delete User <b>{v.username}?</b></h3>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={() => this.toogleDelete()}>Batal</button>
+
+                                                        <button type="button" class="btn btn-primary" onClick={() => this.handleDeleteUser(v.id)} >Delete Username</button>
+                                                    </div>
+                                                </ModalBody>
+                                            </div>
+                                        </Modal>
                                     </div>
 
                                 </div>

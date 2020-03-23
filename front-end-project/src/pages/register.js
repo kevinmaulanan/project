@@ -54,7 +54,7 @@ class Register extends Component {
             email: this.state.email
         }
         console.log(data)
-        Axios.post("http://localhost:3333/register", data)
+        Axios.post(`${process.env.REACT_APP_API_URL}/register`, data)
             .then(res => {
                 console.log(res.data)
                 alert(res.data.msg)

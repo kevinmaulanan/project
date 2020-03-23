@@ -26,8 +26,7 @@ import Axios from 'axios'
 import MenuRestaurant from '../Looping/menu_Resto'
 import MenuCategory from '../Looping/menu_category'
 import Default_foto from '../Asset/Default_foto.png'
-import { FaUserCircle, FaShoppingCart, FaEdit, FaTrash } from 'react-icons/fa'
-
+import { FaUserCircle, FaShoppingCart, FaEdit, FaTrash, FaCartArrowDown } from 'react-icons/fa'
 
 
 class CostumeNavBar extends Component {
@@ -51,15 +50,6 @@ class CostumeNavBar extends Component {
         this.toogleCart = this.toogleCart.bind(this)
     }
 
-    toogle() {
-        this.setState({ isOpen: !this.state.isOpen })
-    }
-
-    toogleCart() {
-        console.log(this.state.modal)
-        this.setState({ modal: !this.state.modal })
-    }
-
 
     componentDidMount() {
         this.getAllRestaurant()
@@ -68,6 +58,21 @@ class CostumeNavBar extends Component {
         this.toogle()
         this.toogleCart()
 
+    }
+
+    componentDidUpdate() {
+        if (window.localStorage.getItem("token")) {
+            this.getCart()
+        }
+    }
+
+    toogle() {
+        this.setState({ isOpen: !this.state.isOpen })
+    }
+
+    toogleCart() {
+        console.log(this.state.modal)
+        this.setState({ modal: !this.state.modal })
     }
 
     getAllRestaurant() {
@@ -105,8 +110,6 @@ class CostumeNavBar extends Component {
         Axios.get("http://localhost:3333/carts", { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
             .then(res => {
 
-                console.log(this.state.get_total_carts)
-                console.log(this.state.get_carts)
                 this.setState({
                     get_carts: res.data.data,
                     get_total_carts: res.data.total
@@ -127,6 +130,25 @@ class CostumeNavBar extends Component {
                 console.log(error.response)
             })
     }
+
+    checkOut(id) {
+
+        const data = {
+            idCart: id
+        }
+        console.log(data)
+        Axios.post("http://localhost:3333/checkout", data, { headers: { Authorization: "Bearer " + window.localStorage.getItem("token") } })
+            .then(res => {
+                console.log(res.data)
+                alert(res.data.message)
+                this.getCart()
+            })
+            .catch(error => {
+                console.log(error.response)
+            })
+    }
+
+
 
     render() {
         return (
@@ -184,23 +206,12 @@ class CostumeNavBar extends Component {
                             <NavItem>
                                 <Link to="/items" className="nav-link mr-5">Items</Link>
                             </NavItem>
-
-
-
-
-
-                            <Form className="form-inline my-2 my-lg-0">
-                                <Input className="" type="search" placeholder="Search" aria-label="Search"></Input>
-                                <Button className="btn btn-inline-success my-2 my-sm-0" type="submit">Search</Button>
-                            </Form>
                         </Nav>
-
 
 
                         <Form className="form-inline my-2 my-lg-0 mr-5" >
                             {this.props.isLogin &&
                                 <>
-
                                     <button type="button" class="btn btn-primary" onClick={this.toogleCart}>
                                         <FaShoppingCart className="mr-3" style={{ height: "30px", width: "30px" }} />
                                         <span class="badge badge-light"> {this.state.get_total_carts}</span>
@@ -226,14 +237,12 @@ class CostumeNavBar extends Component {
                                                     <div className="col-md-2" style={{ marginTop: "15px" }}>
                                                         <h5> Result</h5>
                                                     </div>
-                                                    <div className="col-md-2" style={{ marginTop: "15px" }}>
-                                                        <h5> Transaksi </h5>
-                                                    </div>
-                                                    <div className="col-md-1" style={{ marginTop: "15px" }} >
-                                                        <h5>Edit</h5>
-                                                    </div>
+
                                                     <div className="col-md-1" style={{ marginTop: "15px" }}>
                                                         <h5>Delete</h5>
+                                                    </div>
+                                                    <div className="col-md-2" style={{ marginTop: "15px" }} >
+                                                        <h5>Check Out</h5>
                                                     </div>
                                                 </div>
 
@@ -262,16 +271,13 @@ class CostumeNavBar extends Component {
                                                             <h5 style={{ marginTop: "20px" }}> {v.result}</h5>
                                                         </div>
 
-                                                        <div className="col-md-2">
-                                                            <h5 style={{ marginTop: "20px" }}> {v.transaksi}</h5>
-                                                        </div>
-
-                                                        <div className="col-md-1">
-                                                            <FaEdit style={{ height: "20px", width: "20px", marginTop: "20px" }}></FaEdit>
-                                                        </div>
-
                                                         <div className="col-md-1">
                                                             <Link onClick={() => this.deleteCart(v.id)}>      <FaTrash className="fas" style={{ height: "20px", width: "20px", color: "red", marginTop: "20px" }}></FaTrash>
+                                                            </Link>
+                                                        </div>
+
+                                                        <div className="col-md-2">
+                                                            <Link onClick={() => this.checkOut(v.id)}>      <FaCartArrowDown className="fas" style={{ height: "20px", width: "20px", color: "red", marginTop: "20px" }}></FaCartArrowDown>
                                                             </Link>
                                                         </div>
 

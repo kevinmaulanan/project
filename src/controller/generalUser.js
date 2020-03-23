@@ -51,18 +51,18 @@ const getMyProfile = async (req, res) => {
 }
 
 const updateMyProfile = async (req, res) => {
-
-    await upload(req, res, 'images')
-    req.body.images = '/uploads/' + req.file.filename
-    const dataImage = req.body.images
-    console.log(req.file.filename + '2oi')
-
-    console.log(req.body)
-    const id = req.auth.id_users_detail
-    console.log(id)
-    const { name, email, age, tall, weight } = req.body
-    const { data, success, message } = await processGeneralUser.update(id, name, email, age, tall, weight, dataImage)
     try {
+        await upload(req, res, 'images')
+
+        const dataImage = req.body.images
+        console.log(req.file.filename + '2oi')
+
+        console.log(req.body)
+        const id = req.auth.id_users_detail
+        console.log(id)
+        const { name, email, age, tall, weight } = req.body
+        const { data, success, message } = await processGeneralUser.update(id, name, email, age, tall, weight, dataImage)
+
         if (success) {
             res.send({
                 success: true,
@@ -78,7 +78,7 @@ const updateMyProfile = async (req, res) => {
     } catch (error) {
         res.send({
             success: false,
-            message
+            message: error.message
         })
     }
 }
@@ -107,10 +107,9 @@ const getTopUp = async (req, res) => {
     }
 }
 
-const getReview = async (req, res) => {
-    const id = req.auth.id_items
-    const name = req.auth.nama
-    const { data, success, message } = await processGeneralUser.getMyReviews(id, name)
+const getReviews = async (req, res) => {
+    const { id } = req.params
+    const { data, success, message } = await processGeneralUser.getReviewsByIdItem(id)
     try {
         if (success) {
             res.send({
@@ -131,6 +130,7 @@ const getReview = async (req, res) => {
         })
     }
 }
+
 
 const getAllReviews = async (req, res) => {
     const params = {
@@ -259,6 +259,7 @@ const postCarts = async (req, res) => {
             res.send({
                 success,
                 items,
+                message,
                 harga
             })
         } else {
@@ -355,7 +356,7 @@ module.exports = {
     updateMyProfile,
     getTopUp,
     addTopUp,
-    getReview,
+    getReviews,
     getAllReviews,
     createReviews,
     postCarts,

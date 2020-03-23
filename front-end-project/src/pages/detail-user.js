@@ -40,7 +40,7 @@ class DetailUser extends Component {
     }
 
     getDataProfile() {
-        Axios.get(`http://localhost:3333/profile`, { headers: { Authorization: 'Bearer ' + window.localStorage.getItem('token') } })
+        Axios.get(`${process.env.REACT_APP_API_URL}/profile`, { headers: { Authorization: 'Bearer ' + window.localStorage.getItem('token') } })
             .then(res => {
 
                 this.setState({
@@ -65,7 +65,7 @@ class DetailUser extends Component {
             topup: this.state.topup
         }
 
-        await Axios.post(`http://localhost:3333/topup/add`, data, { headers: { Authorization: 'Bearer ' + window.localStorage.getItem('token') } })
+        await Axios.post(`${process.env.REACT_APP_API_URL}/topup/add`, data, { headers: { Authorization: 'Bearer ' + window.localStorage.getItem('token') } })
             .then(res => {
 
                 alert(res.data.message)
@@ -78,7 +78,7 @@ class DetailUser extends Component {
 
 
     getTopUp() {
-        Axios.get(`http://localhost:3333/topup`, { headers: { Authorization: 'Bearer ' + window.localStorage.getItem('token') } })
+        Axios.get(`${process.env.REACT_APP_API_URL}/topup`, { headers: { Authorization: 'Bearer ' + window.localStorage.getItem('token') } })
             .then(res => {
                 this.setState({
                     ViewTopUp: res.data.data

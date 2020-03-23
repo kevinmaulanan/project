@@ -23,7 +23,7 @@ class Category extends Component {
     }
 
     getDataRestaurant() {
-        Axios.get("http://localhost:3333/browse_restaurant")
+        Axios.get(`${process.env.REACT_APP_API_URL}/browse_restaurant`)
             .then(res => {
                 let DataResto = res.data.result
                 this.setState({ data_restaurant: DataResto })

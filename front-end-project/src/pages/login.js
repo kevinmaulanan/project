@@ -40,7 +40,7 @@ class Login extends Component {
             username: this.state.username,
             password: this.state.password
         }
-
+        console.log(data)
         if (this.state.username === "" && this.state.password === "") {
             alert("Field tidak boleh kosong")
         }
@@ -52,7 +52,7 @@ class Login extends Component {
         }
 
         else {
-            Axios.post("http://localhost:3333/auth/login",
+            Axios.post(`${process.env.REACT_APP_API_URL}/auth/login`,
                 data)
                 .then(res => {
                     console.log(res)
